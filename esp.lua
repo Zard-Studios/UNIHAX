@@ -1,29 +1,44 @@
--- ESP.lua
-local function toggleESP(enabled, button)
-    if enabled then
-        button.Text = "Enable ESP"
-        for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
-            if player.Character then
-                local highlight = player.Character:FindFirstChild("ESPHighlight")
-                if highlight then
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local espEnabled = false
+
+local function toggleESP(enabled)
+    espEnabled = enabled
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            local character = player.Character
+            if character then
+                local highlight = character:FindFirstChild("ESPHighlight")
+                if espEnabled and not highlight then
+                    highlight = Instance.new("Highlight")
+                    highlight.Name = "ESPHighlight"
+                    highlight.FillColor = Color3.fromRGB(255, 0, 0)
+                    highlight.OutlineColor = Color3.fromRGB(255, 255, 0)
+                    highlight.FillTransparency = 0.5
+                    highlight.OutlineTransparency = 0
+                    highlight.Parent = character
+                elseif not espEnabled and highlight then
                     highlight:Destroy()
                 end
-            end
-        end
-    else
-        button.Text = "Disable ESP"
-        for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
-            if player.Character then
-                local highlight = Instance.new("Highlight")
-                highlight.Name = "ESPHighlight"
-                highlight.FillColor = Color3.fromRGB(255, 0, 0)
-                highlight.OutlineColor = Color3.fromRGB(255, 255, 0)
-                highlight.FillTransparency = 0.5
-                highlight.OutlineTransparency = 0
-                highlight.Parent = player.Character
             end
         end
     end
 end
 
-return toggleESP
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function(character)
+        if espEnabled then
+            local highlight = Instance.new("Highlight")
+            highlight.Name = "ESPHighlight"
+            highlight.FillColor = Color3.fromRGB(255, 0, 0)
+            highlight.OutlineColor = Color3.fromRGB(255, 255, 0)
+            highlight.FillTransparency = 0.5
+            highlight.OutlineTransparency = 0
+            highlight.Parent = character
+        end
+    end)
+end)
+
+return {
+    toggleESP = toggleESP
+}

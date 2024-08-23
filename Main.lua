@@ -1,90 +1,41 @@
--- Main.lua
--- Carica gli altri moduli
-local createGUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/UI.lua"))()
-local toggleESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/ESP.lua"))()
-local toggleNoClip = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/NoClip.lua"))()
-local updatePlayerList = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/Teleport.lua"))()
-
 local Players = game:GetService("Players")
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-
 local LocalPlayer = Players.LocalPlayer
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 
-local guiComponents = createGUI()
-local ESPButton = guiComponents.ESPButton
-local NoClipButton = guiComponents.NoClipButton
-local TeleportButton = guiComponents.TeleportButton
-local TeleportFrame = guiComponents.TeleportFrame
-local PlayerList = guiComponents.PlayerList
+local UI = require(script.UI)
+local ESP = require(script.ESP)
+local NoClip = require(script.NoClip)
+local Teleport = require(script.Teleport)
 
 local espEnabled = false
 local noClipEnabled = false
 
-local function onESPButtonClick()
-    toggleESP(espEnabled, ESPButton)
+UI.createGUI()
+
+-- Gestisci gli eventi di clic sui pulsanti
+local MainFrame = LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("ESPControl"):WaitForChild("MainFrame")
+local ESPButton = MainFrame:WaitForChild("ESP")
+local NoClipButton = MainFrame:WaitForChild("NoClip")
+local TeleportButton = MainFrame:WaitForChild("Teleport")
+local TeleportFrame = MainFrame:WaitForChild("TeleportFrame")
+local PlayerList = TeleportFrame:WaitForChild("PlayerList")
+
+ESPButton.MouseButton1Click:Connect(function()
     espEnabled = not espEnabled
-end
+    ESP.toggleESP(espEnabled)
+    ESPButton.Text = espEnabled and "Disable ESP" or "Enable ESP"
+    ESPButton.BackgroundColor3 = espEnabled and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(60, 60, 60)
+end)
 
-local function onNoClipButtonClick()
-    toggleNoClip(noClipEnabled, NoClipButton, Character)
+NoClipButton.MouseButton1Click:Connect(function()
     noClipEnabled = not noClipEnabled
-end
+    NoClip.toggleNoClip(noClipEnabled)
+    NoClipButton.Text = noClipEnabled and "Disable NoClip" or "Enable NoClip"
+    NoClipButton.BackgroundColor3 = noClipEnabled and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(60, 60, 60)
+end)
 
-local function onTeleportButtonClick()
+TeleportButton.MouseButton1Click:Connect(function()
     TeleportFrame.Visible = not TeleportFrame.Visible
-    updatePlayerList(PlayerList, LocalPlayer)
-end
-
-ESPButton.MouseButton1Click:Connect(onESPButtonClick)
-NoClipButton.MouseButton1Click:Connect(onNoClipButtonClick)
-TeleportButton.MouseButton1Click:Connect(onTeleportButtonClick)
-
-local dragging
-local dragInput
-local dragStart
-local startPos
-
-local function update(input)
-    local delta = input.Position - dragStart
-    guiComponents.ScreenGui.MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-end
-
-guiComponents.ScreenGui.MainFrame.TitleBar.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = guiComponents.ScreenGui.MainFrame.Position
-
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
-    end
-end)
-
-guiComponents.ScreenGui.MainFrame.TitleBar.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
-        dragInput = input
-    end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        update(input)
-    end
-end)
-
-guiComponents.ScreenGui.CloseButton.MouseButton1Click:Connect(function()
-    guiComponents.ScreenGui:Destroy()
-end)
-
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if not gameProcessed and input.KeyCode == Enum.KeyCode.RightAlt then
-        guiComponents.ScreenGui.Enabled = not guiComponents.ScreenGui.Enabled
-    end
+    Teleport.updatePlayerList(PlayerList)
 end)
 
 Players.PlayerAdded:Connect(function(player)
@@ -99,11 +50,9 @@ Players.PlayerAdded:Connect(function(player)
             highlight.Parent = character
         end
     end)
-    updatePlayerList(PlayerList, LocalPlayer)
+    Teleport.updatePlayerList(PlayerList)
 end)
 
-Players.PlayerRemoving:Connect(function()
-    updatePlayerList(PlayerList, LocalPlayer)
+Players.PlayerRemoving:Connect(function(player)
+    Teleport.updatePlayerList(PlayerList)
 end)
-
-guiComponents.ScreenGui.Enabled = true
