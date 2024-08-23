@@ -89,6 +89,7 @@ local function createGUI()
     local ESPButton = createButton("ESP", UDim2.new(0.05, 0, 0.15, 0))
     local NoClipButton = createButton("NoClip", UDim2.new(0.05, 0, 0.3, 0))
     local TeleportButton = createButton("Teleport", UDim2.new(0.05, 0, 0.45, 0))
+    local FlyButton = createButton("Fly", UDim2.new(0.05, 0, 0.6, 0))
     
     local TeleportFrame = Instance.new("Frame")
     TeleportFrame.Name = "TeleportFrame"

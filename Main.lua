@@ -5,9 +5,11 @@ local UI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studi
 local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/ESP.lua"))()
 local NoClip = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/NoClip.lua"))()
 local Teleport = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/Teleport.lua"))()
+local Fly = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/Fly.lua"))()
 
 local espEnabled = false
 local noClipEnabled = false
+local flyEnabled = false
 
 UI.createGUI()
 
@@ -16,6 +18,7 @@ local MainFrame = LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("ESPControl
 local ESPButton = MainFrame:WaitForChild("ESP")
 local NoClipButton = MainFrame:WaitForChild("NoClip")
 local TeleportButton = MainFrame:WaitForChild("Teleport")
+local FlyButton = MainFrame:WaitForChild("Fly")  -- Nuovo pulsante Fly
 local TeleportFrame = MainFrame:WaitForChild("TeleportFrame")
 local PlayerList = TeleportFrame:WaitForChild("PlayerList")
 
@@ -31,6 +34,13 @@ NoClipButton.MouseButton1Click:Connect(function()
     NoClip.toggleNoClip(noClipEnabled)
     NoClipButton.Text = noClipEnabled and "Disable NoClip" or "Enable NoClip"
     NoClipButton.BackgroundColor3 = noClipEnabled and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(60, 60, 60)
+end)
+
+FlyButton.MouseButton1Click:Connect(function()
+    flyEnabled = not flyEnabled
+    Fly.toggleFly()
+    FlyButton.Text = flyEnabled and "Disable Fly" or "Enable Fly"
+    FlyButton.BackgroundColor3 = flyEnabled and Color3.fromRGB(255, 165, 0) or Color3.fromRGB(60, 60, 60)  -- Arancione quando abilitato
 end)
 
 TeleportButton.MouseButton1Click:Connect(function()
