@@ -134,121 +134,6 @@ local function createGUI()
     PlayerPadding.PaddingLeft = UDim.new(0, 5)
     PlayerPadding.PaddingRight = UDim.new(0, 5)
     PlayerPadding.Parent = PlayerList
-
-        -- Add Flight Speed Control
-        local SpeedFrame = Instance.new("Frame")
-        SpeedFrame.Name = "SpeedFrame"
-        SpeedFrame.Size = UDim2.new(0.9, 0, 0, 50)
-        SpeedFrame.Position = UDim2.new(0.05, 0, 0.75, 0)
-        SpeedFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-        SpeedFrame.BorderSizePixel = 0
-        SpeedFrame.Parent = MainFrame
-    
-        local SpeedCorner = Instance.new("UICorner")
-        SpeedCorner.CornerRadius = UDim.new(0, 8)
-        SpeedCorner.Parent = SpeedFrame
-    
-        local SpeedLabel = Instance.new("TextLabel")
-        SpeedLabel.Name = "SpeedLabel"
-        SpeedLabel.Size = UDim2.new(0.3, 0, 1, 0)
-        SpeedLabel.BackgroundTransparency = 1
-        SpeedLabel.Text = "Speed:"
-        SpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        SpeedLabel.TextSize = 16
-        SpeedLabel.Font = Enum.Font.GothamSemibold
-        SpeedLabel.Parent = SpeedFrame
-    
-        local SpeedValue = Instance.new("TextBox")
-        SpeedValue.Name = "SpeedValue"
-        SpeedValue.Size = UDim2.new(0.3, 0, 0.6, 0)
-        SpeedValue.Position = UDim2.new(0.35, 0, 0.2, 0)
-        SpeedValue.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-        SpeedValue.Text = "50"
-        SpeedValue.TextColor3 = Color3.fromRGB(255, 255, 255)
-        SpeedValue.TextSize = 16
-        SpeedValue.Font = Enum.Font.GothamSemibold
-        SpeedValue.Parent = SpeedFrame
-    
-        local SpeedValueCorner = Instance.new("UICorner")
-        SpeedValueCorner.CornerRadius = UDim.new(0, 4)
-        SpeedValueCorner.Parent = SpeedValue
-    
-        local SpeedSlider = Instance.new("TextButton")
-        SpeedSlider.Name = "SpeedSlider"
-        SpeedSlider.Size = UDim2.new(0.3, 0, 0.1, 0)
-        SpeedSlider.Position = UDim2.new(0.68, 0, 0.45, 0)
-        SpeedSlider.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-        SpeedSlider.Text = ""
-        SpeedSlider.Parent = SpeedFrame
-    
-        local SpeedSliderCorner = Instance.new("UICorner")
-        SpeedSliderCorner.CornerRadius = UDim.new(0, 4)
-        SpeedSliderCorner.Parent = SpeedSlider
-    
-        local SpeedHandle = Instance.new("Frame")
-        SpeedHandle.Name = "SpeedHandle"
-        SpeedHandle.Size = UDim2.new(0.1, 0, 1.8, 0)
-        SpeedHandle.Position = UDim2.new(0.5, -5, -0.4, 0)
-        SpeedHandle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        SpeedHandle.Parent = SpeedSlider
-    
-        local SpeedHandleCorner = Instance.new("UICorner")
-        SpeedHandleCorner.CornerRadius = UDim.new(0, 4)
-        SpeedHandleCorner.Parent = SpeedHandle
-    
-        -- Speed slider functionality
-        local isDragging = false
-        local minSpeed = 1
-        local maxSpeed = 100
-    
-    -- Speed slider functionality
-    local isDragging = false
-    local minSpeed = 1
-
-    local function updateSpeedValue(value)
-        speed = math.floor(value)
-        SpeedValue.Text = tostring(speed)
-        updateFlightSpeed(speed)
-    end
-
-    SpeedSlider.MouseButton1Down:Connect(function()
-        isDragging = true
-    end)
-
-    UserInputService.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            isDragging = false
-        end
-    end)
-
-    UserInputService.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement and isDragging then
-            local sliderPosition = SpeedSlider.AbsolutePosition
-            local sliderSize = SpeedSlider.AbsoluteSize
-            local relativeX = math.clamp((input.Position.X - sliderPosition.X) / sliderSize.X, 0, 1)
-            SpeedHandle.Position = UDim2.new(relativeX, -5, -0.4, 0)
-            local newSpeed = minSpeed + (maxSpeed - minSpeed) * relativeX
-            updateSpeedValue(newSpeed)
-        end
-    end)
-
-    SpeedValue.FocusLost:Connect(function(enterPressed)
-        if enterPressed then
-            local newSpeed = tonumber(SpeedValue.Text)
-            if newSpeed and newSpeed >= minSpeed and newSpeed <= maxSpeed then
-                local relativeX = (newSpeed - minSpeed) / (maxSpeed - minSpeed)
-                SpeedHandle.Position = UDim2.new(relativeX, -5, -0.4, 0)
-                updateSpeedValue(newSpeed)
-            else
-                SpeedValue.Text = tostring(speed)
-            end
-        end
-    end)
-
-    FlyButton.MouseButton1Click:Connect(function()
-        toggleFly()
-        FlyButton.Text = flying and "Disable Fly" or "Enable Fly"
-    end)
     
     local dragging
     local dragInput
@@ -299,9 +184,6 @@ local function createGUI()
     ScreenGui.Enabled = true
 end
 
-createGUI()
-
 return {
-    toggleFly = toggleFly,
-    updateFlightSpeed = updateFlightSpeed
+    createGUI = createGUI
 }
