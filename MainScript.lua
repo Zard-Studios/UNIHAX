@@ -1,8 +1,8 @@
 local Players = game:GetService("Players")
-local UI = require(game.ServerScriptService.UI)
-local ESP = require(game.ServerScriptService.ESP)
-local NoClip = require(game.ServerScriptService.NoClip)
-local Teleport = require(game.ServerScriptService.Teleport)
+local UI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/UI.lua"))()
+local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/esp.lua"))()
+local NoClip = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/NoClip.lua"))()
+local Teleport = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/Teleport.lua"))()
 
 UI.createGUI(ESP.toggleESP, NoClip.toggleNoClip, Teleport.toggleTeleport)
 
