@@ -58,32 +58,6 @@ local function toggleESP(enabled)
     end
 end
 
--- Funzione per creare il pulsante ESP
-local function createESPButton()
-    local playerGui = LocalPlayer:WaitForChild("PlayerGui")
-    local screenGui = Instance.new("ScreenGui")
-    screenGui.Name = "ESPGui"
-    screenGui.Parent = playerGui
-
-    local button = Instance.new("TextButton")
-    button.Name = "ESPButton"
-    button.Size = UDim2.new(0, 100, 0, 50)
-    button.Position = UDim2.new(1, -110, 0, 10)
-    button.AnchorPoint = Vector2.new(1, 0)
-    button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    button.Text = "ESP: Off"
-    button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    button.Parent = screenGui
-
-    local toggled = false
-    button.MouseButton1Click:Connect(function()
-        toggled = not toggled
-        toggleESP(toggled)
-        button.Text = toggled and "ESP: On" or "ESP: Off"
-        button.BackgroundColor3 = toggled and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(50, 50, 50)
-    end)
-end
-
 -- Inizializza gli ESP per i giocatori esistenti
 for _, player in ipairs(Players:GetPlayers()) do
     onPlayerAdded(player)
@@ -100,9 +74,6 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
--- Crea il pulsante ESP
-createESPButton()
-
 -- Auto-inserimento dello script
 local function autoInsertScript()
     local scriptName = "AutoInsertedESPScript"
@@ -118,3 +89,8 @@ local function autoInsertScript()
 end
 
 autoInsertScript()
+
+-- Esporta la funzione toggleESP per l'uso in UI.lua
+return {
+    toggleESP = toggleESP
+}
