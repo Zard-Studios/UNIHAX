@@ -1,34 +1,29 @@
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-
-local ESP = {}
-
-local espEnabled = false
-
-function ESP.toggleESP()
-    espEnabled = not espEnabled
-    ESPButton.Text = espEnabled and "Disable ESP" or "Enable ESP"
-    ESPButton.BackgroundColor3 = espEnabled and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(60, 60, 60)
-
-    for _, player in ipairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer then
-            local character = player.Character
-            if character then
-                local highlight = character:FindFirstChild("ESPHighlight")
-                if espEnabled and not highlight then
-                    highlight = Instance.new("Highlight")
-                    highlight.Name = "ESPHighlight"
-                    highlight.FillColor = Color3.fromRGB(255, 0, 0)
-                    highlight.OutlineColor = Color3.fromRGB(255, 255, 0)
-                    highlight.FillTransparency = 0.5
-                    highlight.OutlineTransparency = 0
-                    highlight.Parent = character
-                elseif not espEnabled and highlight then
+-- ESP.lua
+local function toggleESP(enabled, button)
+    if enabled then
+        button.Text = "Enable ESP"
+        for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+            if player.Character then
+                local highlight = player.Character:FindFirstChild("ESPHighlight")
+                if highlight then
                     highlight:Destroy()
                 end
+            end
+        end
+    else
+        button.Text = "Disable ESP"
+        for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+            if player.Character then
+                local highlight = Instance.new("Highlight")
+                highlight.Name = "ESPHighlight"
+                highlight.FillColor = Color3.fromRGB(255, 0, 0)
+                highlight.OutlineColor = Color3.fromRGB(255, 255, 0)
+                highlight.FillTransparency = 0.5
+                highlight.OutlineTransparency = 0
+                highlight.Parent = player.Character
             end
         end
     end
 end
 
-return ESP
+return toggleESP
