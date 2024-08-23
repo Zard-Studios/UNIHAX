@@ -16,7 +16,7 @@ local function createGUI()
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
     MainFrame.Size = UDim2.new(0, 300, 0, 400)
-    MainFrame.Position = UDim2.new(0.5, -150, 0.5, -200) -- Centrato sullo schermo
+    MainFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
     MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     MainFrame.BorderSizePixel = 0
     MainFrame.Parent = ScreenGui
@@ -92,10 +92,9 @@ local function createGUI()
     
     local TeleportFrame = Instance.new("Frame")
     TeleportFrame.Name = "TeleportFrame"
-    TeleportFrame.Size = UDim2.new(0.9, 0, 0.5, 0) -- Aumentate le dimensioni
+    TeleportFrame.Size = UDim2.new(0.9, 0, 0.4, 0)
     TeleportFrame.Position = UDim2.new(0.05, 0, 0.6, 0)
     TeleportFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    TeleportFrame.BackgroundTransparency = 0.5 -- Sfondo trasparente
     TeleportFrame.BorderSizePixel = 0
     TeleportFrame.Visible = false
     TeleportFrame.Parent = MainFrame
@@ -118,8 +117,7 @@ local function createGUI()
     PlayerList.Name = "PlayerList"
     PlayerList.Size = UDim2.new(1, -20, 1, -40)
     PlayerList.Position = UDim2.new(0, 10, 0, 35)
-    PlayerList.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Sfondo per il PlayerList
-    PlayerList.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100) -- Colore della scrollbar
+    PlayerList.BackgroundTransparency = 1
     PlayerList.BorderSizePixel = 0
     PlayerList.ScrollBarThickness = 6
     PlayerList.Parent = TeleportFrame
@@ -128,18 +126,6 @@ local function createGUI()
     PlayerListLayout.Parent = PlayerList
     PlayerListLayout.SortOrder = Enum.SortOrder.Name
     PlayerListLayout.Padding = UDim.new(0, 5)
-    
-    local Shadow = Instance.new("ImageLabel")
-    Shadow.Name = "Shadow"
-    Shadow.BackgroundTransparency = 1
-    Shadow.Size = UDim2.new(1, 30, 1, 30)
-    Shadow.Position = UDim2.new(0.5, -165, 0.5, -215)
-    Shadow.Image = "rbxassetid://1316045217"
-    Shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
-    Shadow.ImageTransparency = 0.5
-    Shadow.ScaleType = Enum.ScaleType.Slice
-    Shadow.SliceCenter = Rect.new(10, 10, 118, 118)
-    Shadow.Parent = ScreenGui
     
     local dragging
     local dragInput
@@ -184,19 +170,6 @@ local function createGUI()
     UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if not gameProcessed and input.KeyCode == Enum.KeyCode.RightAlt then
             ScreenGui.Enabled = not ScreenGui.Enabled
-        end
-    end)
-    
-    local TweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-    
-    TeleportButton.MouseButton1Click:Connect(function()
-        if TeleportFrame.Visible then
-            TweenService:Create(TeleportFrame, TweenInfo, {Size = UDim2.new(0.9, 0, 0, 0)}):Play()
-            wait(0.3)
-            TeleportFrame.Visible = false
-        else
-            TeleportFrame.Visible = true
-            TweenService:Create(TeleportFrame, TweenInfo, {Size = UDim2.new(0.9, 0, 0.5, 0)}):Play()
         end
     end)
     
