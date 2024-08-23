@@ -13,13 +13,11 @@ local function applyESPToCharacter(character)
             highlight.FillTransparency = 0.5
             highlight.OutlineTransparency = 0
             highlight.Parent = character
-            print("ESP applied to", character.Name)
         end
     elseif not espEnabled and character then
         local highlight = character:FindFirstChild("ESPHighlight")
         if highlight then
             highlight:Destroy()
-            print("ESP removed from", character.Name)
         end
     end
 end
@@ -27,7 +25,6 @@ end
 local function onCharacterAdded(character)
     character:WaitForChild("Humanoid") -- Assicurati che il personaggio sia completamente caricato
     applyESPToCharacter(character)
-    print("Character added:", character.Name)
 end
 
 local function onPlayerAdded(player)
@@ -37,7 +34,6 @@ local function onPlayerAdded(player)
         if player.Character then
             onCharacterAdded(player.Character)
         end
-        print("Player added:", player.Name)
     end
 end
 
@@ -51,7 +47,6 @@ local function toggleESP(enabled)
             end
         end
     end
-    print("ESP toggled to:", espEnabled)
 end
 
 -- Connetti agli eventi PlayerAdded e CharacterAdded
