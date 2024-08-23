@@ -1,12 +1,9 @@
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 local espEnabled = false
 
 local function applyESPToCharacter(character)
-    if not character then return end
-    
-    if espEnabled then
+    if espEnabled and character then
         local highlight = character:FindFirstChild("ESPHighlight")
         if not highlight then
             highlight = Instance.new("Highlight")
@@ -18,7 +15,7 @@ local function applyESPToCharacter(character)
             highlight.Parent = character
             print("ESP applied to", character.Name)
         end
-    else
+    elseif not espEnabled and character then
         local highlight = character:FindFirstChild("ESPHighlight")
         if highlight then
             highlight:Destroy()
@@ -27,54 +24,41 @@ local function applyESPToCharacter(character)
     end
 end
 
-local function onCharacterAdded(player)
-    if player.Character then
-        applyESPToCharacter(player.Character)
-        print("Character added:", player.Name)
-    end
-    
-    player.CharacterAdded:Connect(function(character)
-        character:WaitForChild("Humanoid")
-        applyESPToCharacter(character)
-        print("Character added (from event):", player.Name)
-    end)
+local function onCharacterAdded(character)
+    character:WaitForChild("Humanoid") -- Assicurati che il personaggio sia completamente caricato
+    applyESPToCharacter(character)
+    print("Character added:", character.Name)
 end
 
 local function onPlayerAdded(player)
     if player ~= LocalPlayer then
-        onCharacterAdded(player)
-        print("Player added:", player.Name)
-    end
-end
-
-local function updateAllPlayers()
-    for _, player in ipairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and player.Character then
-            applyESPToCharacter(player.Character)
+        player.CharacterAdded:Connect(onCharacterAdded)
+        -- Se il personaggio esiste già (giocatore già in gioco), applica subito l'ESP
+        if player.Character then
+            onCharacterAdded(player.Character)
         end
+        print("Player added:", player.Name)
     end
 end
 
 local function toggleESP(enabled)
     espEnabled = enabled
-    updateAllPlayers()
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            -- Applica l'ESP ai personaggi esistenti
+            if player.Character then
+                applyESPToCharacter(player.Character)
+            end
+        end
+    end
     print("ESP toggled to:", espEnabled)
 end
 
--- Connetti agli eventi PlayerAdded
+-- Connetti agli eventi PlayerAdded e CharacterAdded
 Players.PlayerAdded:Connect(onPlayerAdded)
-
--- Applica l'ESP ai giocatori esistenti
 for _, player in ipairs(Players:GetPlayers()) do
-    if player ~= LocalPlayer then
-        onCharacterAdded(player)
-    end
+    onPlayerAdded(player)
 end
-
--- Aggiorna periodicamente l'ESP
-RunService.Heartbeat:Connect(function()
-    updateAllPlayers()
-end)
 
 return {
     toggleESP = toggleESP
