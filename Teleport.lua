@@ -1,5 +1,4 @@
 local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
 
 local function teleportToPlayer(player)
@@ -9,9 +8,8 @@ local function teleportToPlayer(player)
         local localHumanoidRootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
         
         if targetHumanoidRootPart and localHumanoidRootPart then
-            local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-            local tween = TweenService:Create(localHumanoidRootPart, tweenInfo, {CFrame = targetHumanoidRootPart.CFrame})
-            tween:Play()
+            -- Teletrasporto istantaneo
+            localHumanoidRootPart.CFrame = targetHumanoidRootPart.CFrame
         end
     end
 end
@@ -53,13 +51,19 @@ local function updatePlayerList(playerList)
     playerList.CanvasSize = UDim2.new(0, 0, 0, playerList.UIListLayout.AbsoluteContentSize.Y)
 end
 
-Players.PlayerAdded:Connect(function(player)
-    updatePlayerList(playerList)
-end)
+-- Assicurati che playerList sia visibile e correttamente definito
+local function onPlayerAdded(player)
+    if player ~= LocalPlayer then
+        updatePlayerList(LocalPlayer.PlayerGui:WaitForChild("ESPControl"):WaitForChild("TeleportFrame"):WaitForChild("PlayerList"))
+    end
+end
 
-Players.PlayerRemoving:Connect(function(player)
-    updatePlayerList(playerList)
-end)
+local function onPlayerRemoving(player)
+    updatePlayerList(LocalPlayer.PlayerGui:WaitForChild("ESPControl"):WaitForChild("TeleportFrame"):WaitForChild("PlayerList"))
+end
+
+Players.PlayerAdded:Connect(onPlayerAdded)
+Players.PlayerRemoving:Connect(onPlayerRemoving)
 
 return {
     updatePlayerList = updatePlayerList
