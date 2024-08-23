@@ -54,17 +54,21 @@ end
 local function toggleESP(enabled)
     espEnabled = enabled
     for _, player in ipairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer then
-            -- Applica l'ESP ai personaggi esistenti
-            if player.Character then
-                applyESPToCharacter(player.Character)
-            end
+        if player ~= LocalPlayer and player.Character then
+            applyESPToCharacter(player.Character)
         end
     end
 end
 
 -- Connetti agli eventi PlayerAdded e CharacterAdded
 Players.PlayerAdded:Connect(onPlayerAdded)
+Players.PlayerRemoving:Connect(function(player)
+    if player.Character then
+        applyESPToCharacter(player.Character)
+    end
+end)
+
+-- Applica ESP ai personaggi esistenti quando il modulo viene caricato
 for _, player in ipairs(Players:GetPlayers()) do
     onPlayerAdded(player)
 end
