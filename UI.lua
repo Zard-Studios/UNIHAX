@@ -82,6 +82,14 @@ local function createGUI()
         ButtonStroke.Color = Color3.fromRGB(100, 100, 100)
         ButtonStroke.Thickness = 2
         ButtonStroke.Parent = Button
+
+        -- Effetto Hover
+        Button.MouseEnter:Connect(function()
+            TweenService:Create(Button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}):Play()
+        end)
+        Button.MouseLeave:Connect(function()
+            TweenService:Create(Button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}):Play()
+        end)
         
         return Button
     end
@@ -119,13 +127,20 @@ local function createGUI()
     PlayerList.Position = UDim2.new(0, 10, 0, 35)
     PlayerList.BackgroundTransparency = 1
     PlayerList.BorderSizePixel = 0
-    PlayerList.ScrollBarThickness = 6
+    PlayerList.ScrollBarThickness = 8 -- Miglioramento della scrollbar
+    PlayerList.ScrollBarImageColor3 = Color3.fromRGB(150, 150, 150) -- Colore contrastante per la scrollbar
     PlayerList.Parent = TeleportFrame
     
     local PlayerListLayout = Instance.new("UIListLayout")
     PlayerListLayout.Parent = PlayerList
     PlayerListLayout.SortOrder = Enum.SortOrder.Name
     PlayerListLayout.Padding = UDim.new(0, 5)
+    
+    local PlayerPadding = Instance.new("UIPadding") -- Padding per margini più distanziati
+    PlayerPadding.PaddingTop = UDim.new(0, 5)
+    PlayerPadding.PaddingLeft = UDim.new(0, 5)
+    PlayerPadding.PaddingRight = UDim.new(0, 5)
+    PlayerPadding.Parent = PlayerList
     
     local dragging
     local dragInput
