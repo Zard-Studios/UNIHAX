@@ -13,7 +13,8 @@ local controls = {
     A = false,
     D = false,
     Space = false,
-    LeftShift = false
+    E = false,
+    Q = false
 }
 
 local function getHumanoidRootPart()
@@ -27,7 +28,7 @@ local function updateVelocity(bodyVelocity)
 
     local moveDirection = Vector3.new(
         (controls.D and 1 or 0) - (controls.A and 1 or 0),
-        (controls.Space and 1 or 0) - (controls.LeftShift and 1 or 0),
+        (controls.E and 1 or 0) - (controls.Q and 1 or 0),
         (controls.S and 1 or 0) - (controls.W and 1 or 0)
     )
 
