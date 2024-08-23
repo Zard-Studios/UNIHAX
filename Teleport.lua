@@ -5,22 +5,25 @@ local function teleportToPlayer(player)
     local targetCharacter = player.Character
     if targetCharacter and LocalPlayer.Character then
         local targetHumanoidRootPart = targetCharacter:FindFirstChild("HumanoidRootPart")
-        local localHumanoidRootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-        
+        local localCharacter = LocalPlayer.Character
+        local localHumanoidRootPart = localCharacter and localCharacter:FindFirstChild("HumanoidRootPart")
+
         if targetHumanoidRootPart and localHumanoidRootPart then
-            -- Teletrasporto istantaneo
-            localHumanoidRootPart.CFrame = targetHumanoidRootPart.CFrame
+            -- Imposta la posizione istantaneamente
+            localCharacter:SetPrimaryPartCFrame(targetHumanoidRootPart.CFrame)
         end
     end
 end
 
 local function updatePlayerList(playerList)
+    -- Pulisce la lista dei giocatori
     for _, child in ipairs(playerList:GetChildren()) do
         if child:IsA("TextButton") then
             child:Destroy()
         end
     end
     
+    -- Aggiungi ogni giocatore alla lista
     for _, player in ipairs(Players:GetPlayers()) do
         if player ~= LocalPlayer then
             local PlayerButton = Instance.new("TextButton")
@@ -51,11 +54,8 @@ local function updatePlayerList(playerList)
     playerList.CanvasSize = UDim2.new(0, 0, 0, playerList.UIListLayout.AbsoluteContentSize.Y)
 end
 
--- Assicurati che playerList sia visibile e correttamente definito
 local function onPlayerAdded(player)
-    if player ~= LocalPlayer then
-        updatePlayerList(LocalPlayer.PlayerGui:WaitForChild("ESPControl"):WaitForChild("TeleportFrame"):WaitForChild("PlayerList"))
-    end
+    updatePlayerList(LocalPlayer.PlayerGui:WaitForChild("ESPControl"):WaitForChild("TeleportFrame"):WaitForChild("PlayerList"))
 end
 
 local function onPlayerRemoving(player)
