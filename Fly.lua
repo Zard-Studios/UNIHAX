@@ -1,51 +1,73 @@
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
-local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
 
+local LocalPlayer = Players.LocalPlayer
 local flying = false
 local speed = 50
-local flyConnection
+local maxspeed = 100
+local acceleration = 2
+local deceleration = 1
+
+local controls = {
+    W = false,
+    S = false,
+    A = false,
+    D = false,
+    Space = false,
+    LeftShift = false
+}
+
+local function updateVelocity(bodyVelocity, character)
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    if not humanoidRootPart then return end
+
+    local moveDirection = Vector3.new(
+        (controls.D and 1 or 0) - (controls.A and 1 or 0),
+        (controls.Space and 1 or 0) - (controls.LeftShift and 1 or 0),
+        (controls.S and 1 or 0) - (controls.W and 1 or 0)
+    ).Unit
+
+    if moveDirection.Magnitude > 0 then
+        speed = math.min(speed + acceleration, maxspeed)
+    else
+        speed = math.max(speed - deceleration, 0)
+    end
+
+    bodyVelocity.Velocity = humanoidRootPart.CFrame:VectorToWorldSpace(moveDirection * speed)
+end
 
 local function startFlying()
     local character = LocalPlayer.Character
+    if not character then return end
+
     local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-    
     if not humanoidRootPart then return end
 
     local bodyVelocity = Instance.new("BodyVelocity")
     bodyVelocity.Velocity = Vector3.new(0, 0, 0)
-    bodyVelocity.MaxForce = Vector3.new(100000, 100000, 100000)
+    bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
     bodyVelocity.Parent = humanoidRootPart
 
     local bodyGyro = Instance.new("BodyGyro")
     bodyGyro.CFrame = humanoidRootPart.CFrame
-    bodyGyro.MaxTorque = Vector3.new(100000, 100000, 100000)
-    bodyGyro.P = 3000
+    bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+    bodyGyro.P = 10000
     bodyGyro.Parent = humanoidRootPart
 
-    flyConnection = UserInputService.InputBegan:Connect(function(input)
-        if input.KeyCode == Enum.KeyCode.W then
-            bodyVelocity.Velocity = humanoidRootPart.CFrame.LookVector * speed
-        elseif input.KeyCode == Enum.KeyCode.S then
-            bodyVelocity.Velocity = -humanoidRootPart.CFrame.LookVector * speed
-        elseif input.KeyCode == Enum.KeyCode.A then
-            bodyVelocity.Velocity = -humanoidRootPart.CFrame.RightVector * speed
-        elseif input.KeyCode == Enum.KeyCode.D then
-            bodyVelocity.Velocity = humanoidRootPart.CFrame.RightVector * speed
-        elseif input.KeyCode == Enum.KeyCode.Space then
-            bodyVelocity.Velocity = Vector3.new(0, speed, 0)
-        elseif input.KeyCode == Enum.KeyCode.LeftShift then
-            bodyVelocity.Velocity = Vector3.new(0, -speed, 0)
-        end
+    RunService:BindToRenderStep("FlyUpdate", Enum.RenderPriority.Character.Value, function()
+        updateVelocity(bodyVelocity, character)
+        bodyGyro.CFrame = workspace.CurrentCamera.CFrame
     end)
-    
+
     flying = true
 end
 
 local function stopFlying()
     local character = LocalPlayer.Character
+    if not character then return end
+
     local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-    
     if not humanoidRootPart then return end
 
     for _, v in pairs(humanoidRootPart:GetChildren()) do
@@ -54,21 +76,32 @@ local function stopFlying()
         end
     end
 
-    if flyConnection then
-        flyConnection:Disconnect()
-    end
-    
+    RunService:UnbindFromRenderStep("FlyUpdate")
     flying = false
+    speed = 50
 end
 
-local function toggleFly()
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if input.KeyCode == Enum.KeyCode.F then
+        if flying then
+            stopFlying()
+        else
+            startFlying()
+        end
+    elseif controls[input.KeyCode.Name] ~= nil then
+        controls[input.KeyCode.Name] = true
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+    if controls[input.KeyCode.Name] ~= nil then
+        controls[input.KeyCode.Name] = false
+    end
+end)
+
+LocalPlayer.CharacterAdded:Connect(function()
     if flying then
         stopFlying()
-    else
-        startFlying()
     end
-end
-
-return {
-    toggleFly = toggleFly
-}
+end)
