@@ -99,7 +99,6 @@ LocalPlayer.CharacterAdded:Connect(function()
     end
 end)
 
--- Funzione da chiamare dal pulsante UI
 local function toggleFly()
     if flying then
         stopFlying()

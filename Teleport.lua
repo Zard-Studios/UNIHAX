@@ -9,21 +9,20 @@ local function teleportToPlayer(player)
         local localHumanoidRootPart = localCharacter and localCharacter:FindFirstChild("HumanoidRootPart")
 
         if targetHumanoidRootPart and localHumanoidRootPart then
-            -- Imposta la posizione istantaneamente
             localCharacter:SetPrimaryPartCFrame(targetHumanoidRootPart.CFrame)
         end
     end
 end
 
 local function updatePlayerList(playerList)
-    -- Pulisce la lista dei giocatori
+    -- Pulisci lista
     for _, child in ipairs(playerList:GetChildren()) do
         if child:IsA("TextButton") then
             child:Destroy()
         end
     end
     
-    -- Aggiungi ogni giocatore alla lista
+    -- Lista con aggiornamenti
     for _, player in ipairs(Players:GetPlayers()) do
         if player ~= LocalPlayer then
             local PlayerButton = Instance.new("TextButton")

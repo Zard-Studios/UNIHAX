@@ -13,12 +13,11 @@ local flyEnabled = false
 
 UI.createGUI()
 
--- Gestisci gli eventi di clic sui pulsanti
 local MainFrame = LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("ESPControl"):WaitForChild("MainFrame")
 local ESPButton = MainFrame:WaitForChild("ESP")
 local NoClipButton = MainFrame:WaitForChild("NoClip")
 local TeleportButton = MainFrame:WaitForChild("Teleport")
-local FlyButton = MainFrame:WaitForChild("Fly")  -- Nuovo pulsante Fly
+local FlyButton = MainFrame:WaitForChild("Fly")
 local TeleportFrame = MainFrame:WaitForChild("TeleportFrame")
 local PlayerList = TeleportFrame:WaitForChild("PlayerList")
 
@@ -40,7 +39,7 @@ FlyButton.MouseButton1Click:Connect(function()
     flyEnabled = not flyEnabled
     Fly.toggleFly()
     FlyButton.Text = flyEnabled and "Disable Fly" or "Enable Fly"
-    FlyButton.BackgroundColor3 = flyEnabled and Color3.fromRGB(255, 165, 0) or Color3.fromRGB(60, 60, 60)  -- Arancione quando abilitato
+    FlyButton.BackgroundColor3 = flyEnabled and Color3.fromRGB(255, 165, 0) or Color3.fromRGB(60, 60, 60)
 end)
 
 TeleportButton.MouseButton1Click:Connect(function()
