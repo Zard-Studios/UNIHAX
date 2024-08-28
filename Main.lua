@@ -45,6 +45,9 @@ end)
 TeleportButton.MouseButton1Click:Connect(function()
     TeleportFrame.Visible = not TeleportFrame.Visible
     Teleport.updatePlayerList(PlayerList)
+    if not TeleportFrame.Visible then
+        Teleport.stopFollowing()
+    end
 end)
 
 Players.PlayerAdded:Connect(function(player)
