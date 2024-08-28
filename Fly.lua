@@ -4,8 +4,8 @@ local RunService = game:GetService("RunService")
 
 local LocalPlayer = Players.LocalPlayer
 local flying = false
-local speed = 50
-local maxspeed = 100
+local speed = 200
+local maxspeed = 300
 
 local controls = {
     W = false,
