@@ -15,8 +15,8 @@ local function createGUI()
     
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
-    MainFrame.Size = UDim2.new(0, 300, 0, 400)
-    MainFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
+    MainFrame.Size = UDim2.new(0, 300, 0, 450)
+    MainFrame.Position = UDim2.new(0.5, -150, 0.5, -225)
     MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     MainFrame.BorderSizePixel = 0
     MainFrame.Parent = ScreenGui
@@ -65,13 +65,14 @@ local function createGUI()
     local function createButton(name, position)
         local Button = Instance.new("TextButton")
         Button.Name = name
-        Button.Size = UDim2.new(0.9, 0, 0, 50)
+        Button.Size = UDim2.new(0.9, 0, 0, 40)  -- Ridotto l'altezza del pulsante per farlo entrare meglio
         Button.Position = position
         Button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
         Button.Text = "Enable " .. name
         Button.TextColor3 = Color3.fromRGB(255, 255, 255)
         Button.TextSize = 18
         Button.Font = Enum.Font.GothamSemibold
+        Button.TextWrapped = true  -- Aggiunto per avvolgere il testo in caso di necessità
         Button.Parent = MainFrame
         
         local ButtonCorner = Instance.new("UICorner")
@@ -86,15 +87,15 @@ local function createGUI()
         return Button
     end
     
-    local ESPButton = createButton("ESP", UDim2.new(0.05, 0, 0.15, 0))
-    local NoClipButton = createButton("NoClip", UDim2.new(0.05, 0, 0.3, 0))
-    local TeleportButton = createButton("Teleport", UDim2.new(0.05, 0, 0.45, 0))
-    local FlyButton = createButton("Fly", UDim2.new(0.05, 0, 0.6, 0))
+    local ESPButton = createButton("ESP", UDim2.new(0.05, 0, 0.12, 0))
+    local NoClipButton = createButton("NoClip", UDim2.new(0.05, 0, 0.27, 0))
+    local TeleportButton = createButton("Teleport", UDim2.new(0.05, 0, 0.42, 0))
+    local FlyButton = createButton("Fly", UDim2.new(0.05, 0, 0.57, 0))
     
     local TeleportFrame = Instance.new("Frame")
     TeleportFrame.Name = "TeleportFrame"
     TeleportFrame.Size = UDim2.new(0.9, 0, 0.4, 0)
-    TeleportFrame.Position = UDim2.new(0.05, 0, 0.6, 0)
+    TeleportFrame.Position = UDim2.new(0.05, 0, 0.72, 0)
     TeleportFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     TeleportFrame.BorderSizePixel = 0
     TeleportFrame.Visible = false
@@ -135,6 +136,7 @@ local function createGUI()
     PlayerPadding.PaddingRight = UDim.new(0, 5)
     PlayerPadding.Parent = PlayerList
     
+    -- Movimentazione del MainFrame
     local dragging
     local dragInput
     local dragStart

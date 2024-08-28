@@ -1,83 +1,65 @@
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
-local followEnabled = {} -- Tabella per memorizzare lo stato di follow per ogni giocatore
-local followConnection = nil -- Connessione per il loop di follow
-
--- Funzione per teletrasportarsi a un giocatore
+-- Funzione per teletrasportarsi a un altro giocatore
 local function teleportToPlayer(player)
     local targetCharacter = player.Character
-    if targetCharacter and LocalPlayer.Character then
-        local targetHumanoidRootPart = targetCharacter:FindFirstChild("HumanoidRootPart")
-        local localCharacter = LocalPlayer.Character
-        local localHumanoidRootPart = localCharacter and localCharacter:FindFirstChild("HumanoidRootPart")
-
-        if targetHumanoidRootPart and localHumanoidRootPart then
-            localCharacter:SetPrimaryPartCFrame(targetHumanoidRootPart.CFrame)
-        end
+    if targetCharacter and targetCharacter:FindFirstChild("HumanoidRootPart") then
+        LocalPlayer.Character:SetPrimaryPartCFrame(targetCharacter.HumanoidRootPart.CFrame)
     end
 end
 
-local function updatePlayerList(playerList)
-    -- Pulisci lista
-    for _, child in ipairs(playerList:GetChildren()) do
-        if child:IsA("TextButton") then
-            child:Destroy()
-        end
-    end
+-- Funzione per aggiornare la lista dei giocatori nell'interfaccia grafica
+local function updatePlayerList()
+    local playerList = LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("ESPControl"):WaitForChild("MainFrame"):WaitForChild("TeleportFrame"):WaitForChild("PlayerList")
+    playerList:ClearAllChildren()
     
-    -- Lista con aggiornamenti
-    for _, player in ipairs(Players:GetPlayers()) do
+    for _, player in pairs(Players:GetPlayers()) do
         if player ~= LocalPlayer then
-            local PlayerButton = Instance.new("TextButton")
-            PlayerButton.Name = player.Name
-            PlayerButton.Size = UDim2.new(1, -10, 0, 40) -- Riduzione per migliorare il padding
-            PlayerButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-            PlayerButton.Text = player.Name
-            PlayerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-            PlayerButton.TextSize = 14 -- Riduzione della dimensione del testo per evitare che esca fuori
-            PlayerButton.TextWrapped = true -- Abilita il wrapping del testo
-            PlayerButton.TextXAlignment = Enum.TextXAlignment.Left -- Allinea il testo a sinistra
-            PlayerButton.Font = Enum.Font.GothamSemibold
-            PlayerButton.Parent = playerList
+            local Button = Instance.new("TextButton")
+            Button.Name = player.Name
+            Button.Size = UDim2.new(1, 0, 0, 30)
+            Button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+            Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Button.TextSize = 16
+            Button.Font = Enum.Font.GothamSemibold
+            Button.Text = player.Name
+            Button.TextWrapped = true
+            Button.Parent = playerList
             
-            local PlayerButtonCorner = Instance.new("UICorner")
-            PlayerButtonCorner.CornerRadius = UDim.new(0, 6)
-            PlayerButtonCorner.Parent = PlayerButton
+            local ButtonCorner = Instance.new("UICorner")
+            ButtonCorner.CornerRadius = UDim.new(0, 8)
+            ButtonCorner.Parent = Button
             
-            local PlayerButtonStroke = Instance.new("UIStroke")
-            PlayerButtonStroke.Color = Color3.fromRGB(100, 100, 100)
-            PlayerButtonStroke.Thickness = 1
-            PlayerButtonStroke.Parent = PlayerButton
-            
-            local PlayerNamePadding = Instance.new("UIPadding") -- Padding per evitare che il testo tocchi i bordi
-            PlayerNamePadding.PaddingLeft = UDim.new(0, 10)
-            PlayerNamePadding.PaddingRight = UDim.new(0, 10)
-            PlayerNamePadding.Parent = PlayerButton
-            
-            PlayerButton.MouseButton1Click:Connect(function()
+            local ButtonStroke = Instance.new("UIStroke")
+            ButtonStroke.Color = Color3.fromRGB(100, 100, 100)
+            ButtonStroke.Thickness = 2
+            ButtonStroke.Parent = Button
+
+            -- Collegamento del teletrasporto al click sul pulsante
+            Button.MouseButton1Click:Connect(function()
                 teleportToPlayer(player)
             end)
         end
     end
-    
-    playerList.CanvasSize = UDim2.new(0, 0, 0, playerList.UIListLayout.AbsoluteContentSize.Y)
 end
 
--- Funzioni per gestire i cambiamenti nella lista dei giocatori
-local function onPlayerAdded(player)
-    updatePlayerList(LocalPlayer.PlayerGui:WaitForChild("ESPControl"):WaitForChild("TeleportFrame"):WaitForChild("PlayerList"))
+-- Funzione per mostrare o nascondere il frame del teletrasporto
+local function toggleTeleportFrame()
+    local mainFrame = LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("ESPControl"):WaitForChild("MainFrame")
+    local teleportFrame = mainFrame:FindFirstChild("TeleportFrame")
+    if teleportFrame then
+        teleportFrame.Visible = not teleportFrame.Visible
+    end
 end
 
-local function onPlayerRemoving(player)
-    followEnabled[player] = nil -- Rimuovi il giocatore dalla lista di follow
-    updatePlayerList(LocalPlayer.PlayerGui:WaitForChild("ESPControl"):WaitForChild("TeleportFrame"):WaitForChild("PlayerList"))
-end
+-- Collegamento delle funzioni agli eventi di gioco
+Players.PlayerAdded:Connect(updatePlayerList)
+Players.PlayerRemoving:Connect(updatePlayerList)
+updatePlayerList()
 
-Players.PlayerAdded:Connect(onPlayerAdded)
-Players.PlayerRemoving:Connect(onPlayerRemoving)
-
+-- Esportazione delle funzioni per poterle utilizzare nell'interfaccia grafica
 return {
-    updatePlayerList = updatePlayerList
+    updatePlayerList = updatePlayerList,
+    toggleTeleportFrame = toggleTeleportFrame
 }
