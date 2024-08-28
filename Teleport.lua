@@ -11,9 +11,23 @@ end
 
 -- Funzione per aggiornare la lista dei giocatori nell'interfaccia grafica
 local function updatePlayerList()
-    local playerList = LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("ESPControl"):WaitForChild("MainFrame"):WaitForChild("TeleportFrame"):WaitForChild("PlayerList")
+    local playerList = LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("ESPControl"):WaitForChild("MainFrame"):WaitForChild("TeleportFrame"):FindFirstChild("PlayerList")
+    
+    -- Assicurati che playerList e UIListLayout esistano
+    if not playerList then return end
+    
+    -- Rimuovi tutti i figli attuali della lista
     playerList:ClearAllChildren()
     
+    -- Crea il layout se non esiste
+    if not playerList:FindFirstChildOfClass("UIListLayout") then
+        local listLayout = Instance.new("UIListLayout")
+        listLayout.SortOrder = Enum.SortOrder.Name
+        listLayout.Padding = UDim.new(0, 5)
+        listLayout.Parent = playerList
+    end
+
+    -- Aggiungi pulsanti per ogni giocatore
     for _, player in pairs(Players:GetPlayers()) do
         if player ~= LocalPlayer then
             local Button = Instance.new("TextButton")
