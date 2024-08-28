@@ -39,50 +39,66 @@ local function stopFollowing()
     followingPlayer = nil
 end
 
+local function createStylishButton(parent, text, position, size)
+    local Button = Instance.new("TextButton")
+    Button.Name = text .. "Button"
+    Button.Size = size or UDim2.new(0.45, 0, 1, -10)
+    Button.Position = position
+    Button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    Button.Text = text
+    Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Button.TextSize = 14
+    Button.Font = Enum.Font.GothamSemibold
+    Button.Parent = parent
+
+    local ButtonCorner = Instance.new("UICorner")
+    ButtonCorner.CornerRadius = UDim.new(0, 6)
+    ButtonCorner.Parent = Button
+
+    local ButtonStroke = Instance.new("UIStroke")
+    ButtonStroke.Color = Color3.fromRGB(100, 100, 100)
+    ButtonStroke.Thickness = 1
+    ButtonStroke.Parent = Button
+
+    return Button
+end
+
 local function updatePlayerList(playerList)
     for _, child in ipairs(playerList:GetChildren()) do
-        if child:IsA("TextButton") then
+        if child:IsA("Frame") then
             child:Destroy()
         end
     end
 
     for _, player in ipairs(Players:GetPlayers()) do
         if player ~= LocalPlayer then
-            local PlayerButton = Instance.new("TextButton")
-            PlayerButton.Name = player.Name
-            PlayerButton.Size = UDim2.new(1, -10, 0, 40)
-            PlayerButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-            PlayerButton.Text = player.Name
-            PlayerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-            PlayerButton.TextSize = 16
-            PlayerButton.Font = Enum.Font.GothamSemibold
-            PlayerButton.Parent = playerList
+            local PlayerFrame = Instance.new("Frame")
+            PlayerFrame.Name = player.Name .. "Frame"
+            PlayerFrame.Size = UDim2.new(1, -10, 0, 60)
+            PlayerFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            PlayerFrame.BorderSizePixel = 0
+            PlayerFrame.Parent = playerList
 
-            local PlayerButtonCorner = Instance.new("UICorner")
-            PlayerButtonCorner.CornerRadius = UDim.new(0, 6)
-            PlayerButtonCorner.Parent = PlayerButton
+            local PlayerFrameCorner = Instance.new("UICorner")
+            PlayerFrameCorner.CornerRadius = UDim.new(0, 8)
+            PlayerFrameCorner.Parent = PlayerFrame
 
-            local PlayerButtonStroke = Instance.new("UIStroke")
-            PlayerButtonStroke.Color = Color3.fromRGB(100, 100, 100)
-            PlayerButtonStroke.Thickness = 1
-            PlayerButtonStroke.Parent = PlayerButton
+            local PlayerName = Instance.new("TextLabel")
+            PlayerName.Name = "PlayerName"
+            PlayerName.Size = UDim2.new(1, -10, 0, 30)
+            PlayerName.Position = UDim2.new(0, 10, 0, 5)
+            PlayerName.BackgroundTransparency = 1
+            PlayerName.Text = player.Name
+            PlayerName.TextColor3 = Color3.fromRGB(255, 255, 255)
+            PlayerName.TextSize = 18
+            PlayerName.Font = Enum.Font.GothamSemibold
+            PlayerName.TextXAlignment = Enum.TextXAlignment.Left
+            PlayerName.Parent = PlayerFrame
 
-            local FollowButton = Instance.new("TextButton")
-            FollowButton.Name = "FollowButton"
-            FollowButton.Size = UDim2.new(0, 60, 1, -10)
-            FollowButton.Position = UDim2.new(1, -65, 0, 5)
-            FollowButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-            FollowButton.Text = "Follow"
-            FollowButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-            FollowButton.TextSize = 14
-            FollowButton.Font = Enum.Font.GothamSemibold
-            FollowButton.Parent = PlayerButton
+            local TeleportButton = createStylishButton(PlayerFrame, "Teleport", UDim2.new(0, 10, 1, -35), UDim2.new(0.45, -15, 0, 30))
+            local FollowButton = createStylishButton(PlayerFrame, "Follow", UDim2.new(0.55, 5, 1, -35), UDim2.new(0.45, -15, 0, 30))
 
-            local FollowButtonCorner = Instance.new("UICorner")
-            FollowButtonCorner.CornerRadius = UDim.new(0, 4)
-            FollowButtonCorner.Parent = FollowButton
-
-            PlayerButton.MouseButton1Click:Connect(function()
+            TeleportButton.MouseButton1Click:Connect(function()
                 teleportToPlayer(player)
             end)
 
@@ -90,10 +106,10 @@ local function updatePlayerList(playerList)
                 if followingPlayer == player then
                     stopFollowing()
                     FollowButton.Text = "Follow"
-                    FollowButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+                    FollowButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
                 else
                     startFollowing(player)
-                    FollowButton.Text = "Stop"
+                    FollowButton.Text = "Stop Following"
                     FollowButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
                 end
             end)
