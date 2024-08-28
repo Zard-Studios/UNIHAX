@@ -4,6 +4,7 @@ local LocalPlayer = Players.LocalPlayer
 
 local followingPlayer = nil
 local followConnection = nil
+local followButton = nil
 
 local function teleportToPlayer(player)
     local targetCharacter = player.Character
@@ -18,17 +19,25 @@ local function teleportToPlayer(player)
     end
 end
 
-local function startFollowing(player)
+local function startFollowing(player, button)
     if followConnection then
-        followConnection:Disconnect()
+        stopFollowing()
     end
 
     followingPlayer = player
+    followButton = button
     followConnection = RunService.Heartbeat:Connect(function()
         if followingPlayer and followingPlayer.Character then
             teleportToPlayer(followingPlayer)
+        else
+            stopFollowing()
         end
     end)
+
+    if followButton then
+        followButton.Text = "Stop"
+        followButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    end
 end
 
 local function stopFollowing()
@@ -36,7 +45,12 @@ local function stopFollowing()
         followConnection:Disconnect()
         followConnection = nil
     end
+    if followButton then
+        followButton.Text = "Follow"
+        followButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    end
     followingPlayer = nil
+    followButton = nil
 end
 
 local function createStylishButton(parent, text, position, size)
@@ -107,14 +121,16 @@ local function updatePlayerList(playerList)
             FollowButton.MouseButton1Click:Connect(function()
                 if followingPlayer == player then
                     stopFollowing()
-                    FollowButton.Text = "Follow"
-                    FollowButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
                 else
-                    startFollowing(player)
-                    FollowButton.Text = "Stop"
-                    FollowButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+                    startFollowing(player, FollowButton)
                 end
             end)
+
+            if followingPlayer == player then
+                FollowButton.Text = "Stop"
+                FollowButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+                followButton = FollowButton
+            end
         end
     end
 
@@ -126,10 +142,10 @@ local function onPlayerAdded(player)
 end
 
 local function onPlayerRemoving(player)
-    updatePlayerList(LocalPlayer.PlayerGui:WaitForChild("ESPControl"):WaitForChild("MainFrame"):WaitForChild("TeleportFrame"):WaitForChild("PlayerList"))
     if followingPlayer == player then
         stopFollowing()
     end
+    updatePlayerList(LocalPlayer.PlayerGui:WaitForChild("ESPControl"):WaitForChild("MainFrame"):WaitForChild("TeleportFrame"):WaitForChild("PlayerList"))
 end
 
 Players.PlayerAdded:Connect(onPlayerAdded)
