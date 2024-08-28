@@ -19,7 +19,6 @@ local function teleportToPlayer(player)
     end
 end
 
--- Funzione per aggiornare la lista dei giocatori con pulsanti per teletrasporto e follow
 local function updatePlayerList(playerList)
     -- Pulisci lista
     for _, child in ipairs(playerList:GetChildren()) do
@@ -33,40 +32,52 @@ local function updatePlayerList(playerList)
         if player ~= LocalPlayer then
             local PlayerButton = Instance.new("TextButton")
             PlayerButton.Name = player.Name
-            PlayerButton.Size = UDim2.new(1, -10, 0, 40)  -- Regolato per mantenere margini migliori
+            PlayerButton.Size = UDim2.new(1, -10, 0, 40) -- Riduzione per migliorare il padding
             PlayerButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
             PlayerButton.Text = player.Name
             PlayerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-            PlayerButton.TextSize = 16
+            PlayerButton.TextSize = 14 -- Riduzione della dimensione del testo per evitare che esca fuori
+            PlayerButton.TextWrapped = true -- Abilita il wrapping del testo
+            PlayerButton.TextXAlignment = Enum.TextXAlignment.Left -- Allinea il testo a sinistra
             PlayerButton.Font = Enum.Font.GothamSemibold
-            PlayerButton.TextScaled = true  -- Ridimensiona automaticamente il testo
-            PlayerButton.TextWrapped = true -- Evita che il testo esca fuori dal pulsante
             PlayerButton.Parent = playerList
             
-            -- Aggiunta di padding interno per evitare che il testo tocchi i bordi
-            local TextPadding = Instance.new("UIPadding")
-            TextPadding.PaddingLeft = UDim.new(0, 10)
-            TextPadding.PaddingRight = UDim.new(0, 10)
-            TextPadding.Parent = PlayerButton
-            
-            -- Bordo arrotondato
             local PlayerButtonCorner = Instance.new("UICorner")
             PlayerButtonCorner.CornerRadius = UDim.new(0, 6)
             PlayerButtonCorner.Parent = PlayerButton
             
-            -- Bordo esterno
             local PlayerButtonStroke = Instance.new("UIStroke")
             PlayerButtonStroke.Color = Color3.fromRGB(100, 100, 100)
             PlayerButtonStroke.Thickness = 1
             PlayerButtonStroke.Parent = PlayerButton
             
-            -- Evento click per teletrasporto
+            local PlayerNamePadding = Instance.new("UIPadding") -- Padding per evitare che il testo tocchi i bordi
+            PlayerNamePadding.PaddingLeft = UDim.new(0, 10)
+            PlayerNamePadding.PaddingRight = UDim.new(0, 10)
+            PlayerNamePadding.Parent = PlayerButton
+            
             PlayerButton.MouseButton1Click:Connect(function()
                 teleportToPlayer(player)
             end)
         end
     end
     
-    -- Ridimensiona automaticamente la lista
     playerList.CanvasSize = UDim2.new(0, 0, 0, playerList.UIListLayout.AbsoluteContentSize.Y)
 end
+
+-- Funzioni per gestire i cambiamenti nella lista dei giocatori
+local function onPlayerAdded(player)
+    updatePlayerList(LocalPlayer.PlayerGui:WaitForChild("ESPControl"):WaitForChild("TeleportFrame"):WaitForChild("PlayerList"))
+end
+
+local function onPlayerRemoving(player)
+    followEnabled[player] = nil -- Rimuovi il giocatore dalla lista di follow
+    updatePlayerList(LocalPlayer.PlayerGui:WaitForChild("ESPControl"):WaitForChild("TeleportFrame"):WaitForChild("PlayerList"))
+end
+
+Players.PlayerAdded:Connect(onPlayerAdded)
+Players.PlayerRemoving:Connect(onPlayerRemoving)
+
+return {
+    updatePlayerList = updatePlayerList
+}
