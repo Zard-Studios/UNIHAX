@@ -10,16 +10,14 @@ local function startSpinning()
     spinConnection = RunService.RenderStepped:Connect(function(deltaTime)
         if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
             local humanoidRootPart = LocalPlayer.Character.HumanoidRootPart
-            local randomRotation = Vector3.new(
-                math.random(-720, 720) * deltaTime,
-                math.random(-720, 720) * deltaTime,
-                math.random(-720, 720) * deltaTime
-            )
-            humanoidRootPart.CFrame = humanoidRootPart.CFrame * CFrame.Angles(
-                math.rad(randomRotation.X),
-                math.rad(randomRotation.Y),
-                math.rad(randomRotation.Z)
-            )
+            
+            -- Rotazione continua su tutte le assi
+            local rotationSpeed = 6 -- Velocità della rotazione
+            local xRotation = math.rad(rotationSpeed * deltaTime * 360)
+            local yRotation = math.rad(rotationSpeed * deltaTime * 360)
+            local zRotation = math.rad(rotationSpeed * deltaTime * 360)
+            
+            humanoidRootPart.CFrame = humanoidRootPart.CFrame * CFrame.Angles(xRotation, yRotation, zRotation)
         end
     end)
 end
