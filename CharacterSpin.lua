@@ -11,8 +11,8 @@ local function startSpinning()
         if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
             local humanoidRootPart = LocalPlayer.Character.HumanoidRootPart
             
-            -- Rotazione continua su tutte le assi
-            local rotationSpeed = 6 -- Velocità della rotazione
+            -- Rotazione estremamente veloce su tutte le assi
+            local rotationSpeed = 360 -- Velocità estremamente elevata
             local xRotation = math.rad(rotationSpeed * deltaTime * 360)
             local yRotation = math.rad(rotationSpeed * deltaTime * 360)
             local zRotation = math.rad(rotationSpeed * deltaTime * 360)
