@@ -11,9 +11,9 @@ local function startSpinning()
         if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
             local humanoidRootPart = LocalPlayer.Character.HumanoidRootPart
             local randomRotation = Vector3.new(
-                math.random(-360, 360) * deltaTime,
-                math.random(-360, 360) * deltaTime,
-                math.random(-360, 360) * deltaTime
+                math.random(-720, 720) * deltaTime,
+                math.random(-720, 720) * deltaTime,
+                math.random(-720, 720) * deltaTime
             )
             humanoidRootPart.CFrame = humanoidRootPart.CFrame * CFrame.Angles(
                 math.rad(randomRotation.X),
