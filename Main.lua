@@ -6,6 +6,7 @@ local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Stud
 local NoClip = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/NoClip.lua"))()
 local Teleport = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/Teleport.lua"))()
 local Fly = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/Fly.lua"))()
+local CharacterSpin = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/CharacterSpin.lua"))()
 
 local espEnabled = false
 local noClipEnabled = false
@@ -20,6 +21,7 @@ local TeleportButton = MainFrame:WaitForChild("Teleport")
 local FlyButton = MainFrame:WaitForChild("Fly")
 local TeleportFrame = MainFrame:WaitForChild("TeleportFrame")
 local PlayerList = TeleportFrame:WaitForChild("PlayerList")
+local SpinButton = CharacterSpin.createSpinButton(MainFrame)
 
 ESPButton.MouseButton1Click:Connect(function()
     espEnabled = not espEnabled
