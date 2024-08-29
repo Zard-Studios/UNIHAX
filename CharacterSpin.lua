@@ -12,7 +12,7 @@ local function startSpinning()
             local humanoidRootPart = LocalPlayer.Character.HumanoidRootPart
             
             -- Rotazione estremamente veloce su tutte le assi
-            local rotationSpeed = 360 -- Velocità estremamente elevata
+            local rotationSpeed = 1000 -- Velocità estremamente elevata
             local xRotation = math.rad(rotationSpeed * deltaTime * 360)
             local yRotation = math.rad(rotationSpeed * deltaTime * 360)
             local zRotation = math.rad(rotationSpeed * deltaTime * 360)
