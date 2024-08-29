@@ -11,6 +11,7 @@ local CharacterSpin = loadstring(game:HttpGet("https://raw.githubusercontent.com
 local espEnabled = false
 local noClipEnabled = false
 local flyEnabled = false
+local spinning = false
 
 UI.createGUI()
 
@@ -19,9 +20,9 @@ local ESPButton = MainFrame:WaitForChild("ESP")
 local NoClipButton = MainFrame:WaitForChild("NoClip")
 local TeleportButton = MainFrame:WaitForChild("Teleport")
 local FlyButton = MainFrame:WaitForChild("Fly")
+local SpinButton = MainFrame:WaitForChild("CharacterSpin")
 local TeleportFrame = MainFrame:WaitForChild("TeleportFrame")
 local PlayerList = TeleportFrame:WaitForChild("PlayerList")
-local SpinButton = CharacterSpin.createSpinButton(MainFrame)
 
 ESPButton.MouseButton1Click:Connect(function()
     espEnabled = not espEnabled
@@ -42,6 +43,13 @@ FlyButton.MouseButton1Click:Connect(function()
     Fly.toggleFly()
     FlyButton.Text = flyEnabled and "Disable Fly" or "Enable Fly"
     FlyButton.BackgroundColor3 = flyEnabled and Color3.fromRGB(255, 165, 0) or Color3.fromRGB(60, 60, 60)
+end)
+
+SpinButton.MouseButton1Click:Connect(function()
+    spinning = not spinning
+    CharacterSpin.toggleSpin()
+    SpinButton.Text = spinning and "Disable Spin" or "Enable Spin"
+    SpinButton.BackgroundColor3 = spinning and Color3.fromRGB(255, 0, 255) or Color3.fromRGB(60, 60, 60)
 end)
 
 TeleportButton.MouseButton1Click:Connect(function()
