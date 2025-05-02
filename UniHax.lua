@@ -71,7 +71,7 @@ local function createGUI()
     MinimizeButton.Size = UDim2.new(0, 30, 0, 30)
     MinimizeButton.Position = UDim2.new(1, -70, 0, 5)
     MinimizeButton.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
-    MinimizeButton.Text = "_"
+    MinimizeButton.Text = "-"
     MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     MinimizeButton.TextSize = 18
     MinimizeButton.Font = Enum.Font.GothamBold
