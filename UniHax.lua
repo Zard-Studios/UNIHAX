@@ -4,8 +4,18 @@ local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local Humanoid = Character:WaitForChild("Humanoid")
-local RootPart = Character:WaitForChild("HumanoidRootPart")
+local Humanoid = Character and Character:WaitForChild("Humanoid")
+local RootPart = Character and Character:WaitForChild("HumanoidRootPart")
+
+-- Funzione per aggiornare i riferimenti al personaggio quando riappare
+local function updateCharacterReferences(newCharacter)
+    Character = newCharacter
+    Humanoid = Character:WaitForChild("Humanoid")
+    RootPart = Character:WaitForChild("HumanoidRootPart")
+end
+
+-- Connessione all'evento CharacterAdded per aggiornare i riferimenti quando il personaggio riappare
+LocalPlayer.CharacterAdded:Connect(updateCharacterReferences)
 local espEnabled = false
 local noClipEnabled = false
 
@@ -18,6 +28,9 @@ local function createGUI()
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "ESPControl"
     ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+    ScreenGui.ResetOnSpawn = false
+    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    ScreenGui.DisplayOrder = 999
     
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
@@ -273,7 +286,7 @@ local function createGUI()
     end)
     
     CloseButton.MouseButton1Click:Connect(function()
-        ScreenGui:Destroy()
+        ScreenGui.Enabled = false
     end)
     
     UserInputService.InputBegan:Connect(function(input, gameProcessed)

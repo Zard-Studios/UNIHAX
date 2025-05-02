@@ -12,6 +12,9 @@ local function createGUI()
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "ESPControl"
     ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+    ScreenGui.ResetOnSpawn = false
+    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    ScreenGui.DisplayOrder = 999
     
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
@@ -173,7 +176,7 @@ local function createGUI()
     end)
     
     CloseButton.MouseButton1Click:Connect(function()
-        ScreenGui:Destroy()
+        ScreenGui.Enabled = false
     end)
     
     UserInputService.InputBegan:Connect(function(input, gameProcessed)
