@@ -13,7 +13,38 @@ local noClipEnabled = false
 local flyEnabled = false
 local spinning = false
 
+-- Crea l'interfaccia utente
 UI.createGUI()
+
+-- Funzione per garantire che l'interfaccia utente persista dopo la morte
+local function ensureGUIExists()
+    local playerGui = LocalPlayer:FindFirstChild("PlayerGui")
+    if playerGui then
+        local espControl = playerGui:FindFirstChild("ESPControl")
+        if not espControl or not espControl.Parent then
+            UI.createGUI()
+            -- Ripristina lo stato dei pulsanti se necessario
+            if espEnabled then
+                ESP.toggleESP(true)
+            end
+            if noClipEnabled then
+                NoClip.toggleNoClip(true)
+            end
+            if flyEnabled then
+                Fly.toggleFly()
+            end
+            if spinning then
+                CharacterSpin.toggleSpin()
+            end
+        end
+    end
+end
+
+-- Connetti all'evento CharacterAdded per garantire che l'interfaccia utente persista
+LocalPlayer.CharacterAdded:Connect(function()
+    task.wait(1) -- Attendi un momento per assicurarsi che il personaggio sia completamente caricato
+    ensureGUIExists()
+end)
 
 local MainFrame = LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("ESPControl"):WaitForChild("MainFrame")
 local ESPButton = MainFrame:WaitForChild("ESP")

@@ -27,7 +27,7 @@ local function createGUI()
     
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "ESPControl"
-    ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+    ScreenGui.Parent = game:GetService("CoreGui") or LocalPlayer:WaitForChild("PlayerGui")
     ScreenGui.ResetOnSpawn = false
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     ScreenGui.DisplayOrder = 999
