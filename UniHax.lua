@@ -70,11 +70,11 @@ local function createGUI()
     MinimizeButton.Name = "MinimizeButton"
     MinimizeButton.Size = UDim2.new(0, 30, 0, 30)
     MinimizeButton.Position = UDim2.new(1, -70, 0, 5)
-    MinimizeButton.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
+    MinimizeButton.BackgroundColor3 = Color3.fromRGB(255, 200, 50)
     MinimizeButton.Text = "-"
-    MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    MinimizeButton.TextSize = 18
-    MinimizeButton.Font = Enum.Font.GothamBold
+    MinimizeButton.TextColor3 = Color3.fromRGB(30, 30, 30)
+    MinimizeButton.Visible = true
+    MinimizeButton.ZIndex = 2
     MinimizeButton.Parent = TitleBar
     
     local MinimizeCorner = Instance.new("UICorner")
@@ -85,6 +85,7 @@ local function createGUI()
     CloseButton.Name = "CloseButton"
     CloseButton.Size = UDim2.new(0, 30, 0, 30)
     CloseButton.Position = UDim2.new(1, -35, 0, 5)
+    CloseButton.ZIndex = 2
     CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
     CloseButton.Text = "X"
     CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
