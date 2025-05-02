@@ -66,26 +66,10 @@ local function createGUI()
     TitleLabel.Font = Enum.Font.GothamBold
     TitleLabel.Parent = TitleBar
     
-    local MinimizeButton = Instance.new("TextButton")
-    MinimizeButton.Name = "MinimizeButton"
-    MinimizeButton.Size = UDim2.new(0, 30, 0, 30)
-    MinimizeButton.Position = UDim2.new(1, -70, 0, 5)
-    MinimizeButton.BackgroundColor3 = Color3.fromRGB(255, 200, 50)
-    MinimizeButton.Text = "-"
-    MinimizeButton.TextColor3 = Color3.fromRGB(30, 30, 30)
-    MinimizeButton.Visible = true
-    MinimizeButton.ZIndex = 2
-    MinimizeButton.Parent = TitleBar
-    
-    local MinimizeCorner = Instance.new("UICorner")
-    MinimizeCorner.CornerRadius = UDim.new(0, 8)
-    MinimizeCorner.Parent = MinimizeButton
-    
     local CloseButton = Instance.new("TextButton")
     CloseButton.Name = "CloseButton"
     CloseButton.Size = UDim2.new(0, 30, 0, 30)
     CloseButton.Position = UDim2.new(1, -35, 0, 5)
-    CloseButton.ZIndex = 2
     CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
     CloseButton.Text = "X"
     CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -96,30 +80,6 @@ local function createGUI()
     local CloseCorner = Instance.new("UICorner")
     CloseCorner.CornerRadius = UDim.new(0, 8)
     CloseCorner.Parent = CloseButton
-    
-    -- Crea il frame minimizzato (inizialmente nascosto)
-    local MinimizedFrame = Instance.new("Frame")
-    MinimizedFrame.Name = "MinimizedFrame"
-    MinimizedFrame.Size = UDim2.new(0, 50, 0, 50)
-    MinimizedFrame.Position = UDim2.new(1, -60, 1, -60)
-    MinimizedFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    MinimizedFrame.BorderSizePixel = 0
-    MinimizedFrame.Visible = false
-    MinimizedFrame.Parent = ScreenGui
-    
-    local MinimizedCorner = Instance.new("UICorner")
-    MinimizedCorner.CornerRadius = UDim.new(0, 10)
-    MinimizedCorner.Parent = MinimizedFrame
-    
-    local MinimizedIcon = Instance.new("TextLabel")
-    MinimizedIcon.Name = "MinimizedIcon"
-    MinimizedIcon.Size = UDim2.new(1, 0, 1, 0)
-    MinimizedIcon.BackgroundTransparency = 1
-    MinimizedIcon.Text = "UH"
-    MinimizedIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
-    MinimizedIcon.TextSize = 20
-    MinimizedIcon.Font = Enum.Font.GothamBold
-    MinimizedIcon.Parent = MinimizedFrame
     
     local function createButton(name, position)
         local Button = Instance.new("TextButton")
@@ -322,70 +282,6 @@ local function createGUI()
     UserInputService.InputChanged:Connect(function(input)
         if input == dragInput and dragging then
             update(input)
-        end
-    end)
-    
-    -- Funzione per minimizzare la finestra
-    local function minimizeWindow()
-        MainFrame.Visible = false
-        MinimizedFrame.Visible = true
-    end
-    
-    -- Funzione per ripristinare la finestra
-    local function restoreWindow()
-        MainFrame.Visible = true
-        MinimizedFrame.Visible = false
-    end
-    
-    MinimizeButton.MouseButton1Click:Connect(minimizeWindow)
-    -- Aggiungi la possibilità di trascinare il frame minimizzato
-    local minimizedDragging
-    local minimizedDragInput
-    local minimizedDragStart
-    local minimizedStartPos
-    
-    local function updateMinimizedPosition(input)
-        local delta = input.Position - minimizedDragStart
-        MinimizedFrame.Position = UDim2.new(minimizedStartPos.X.Scale, minimizedStartPos.X.Offset + delta.X, minimizedStartPos.Y.Scale, minimizedStartPos.Y.Offset + delta.Y)
-    end
-    
-    MinimizedFrame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            local clickDuration = 0
-            local connection
-            
-            minimizedDragging = true
-            minimizedDragStart = input.Position
-            minimizedStartPos = MinimizedFrame.Position
-            
-            connection = RunService.Heartbeat:Connect(function()
-                clickDuration = clickDuration + RunService.Heartbeat:Wait()
-                if clickDuration >= 0.3 then
-                    connection:Disconnect()
-                end
-            end)
-            
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    minimizedDragging = false
-                    if clickDuration < 0.3 then
-                        restoreWindow()
-                    end
-                    if connection then connection:Disconnect() end
-                end
-            end)
-        end
-    end)
-    
-    MinimizedFrame.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
-            minimizedDragInput = input
-        end
-    end)
-    
-    UserInputService.InputChanged:Connect(function(input)
-        if input == minimizedDragInput and minimizedDragging then
-            updateMinimizedPosition(input)
         end
     end)
     
