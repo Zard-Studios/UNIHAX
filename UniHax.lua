@@ -66,6 +66,21 @@ local function createGUI()
     TitleLabel.Font = Enum.Font.GothamBold
     TitleLabel.Parent = TitleBar
     
+    local MinimizeButton = Instance.new("TextButton")
+    MinimizeButton.Name = "MinimizeButton"
+    MinimizeButton.Size = UDim2.new(0, 30, 0, 30)
+    MinimizeButton.Position = UDim2.new(1, -70, 0, 5)
+    MinimizeButton.BackgroundColor3 = Color3.fromRGB(60, 120, 200)
+    MinimizeButton.Text = "-"
+    MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    MinimizeButton.TextSize = 18
+    MinimizeButton.Font = Enum.Font.GothamBold
+    MinimizeButton.Parent = TitleBar
+    
+    local MinimizeCorner = Instance.new("UICorner")
+    MinimizeCorner.CornerRadius = UDim.new(0, 8)
+    MinimizeCorner.Parent = MinimizeButton
+    
     local CloseButton = Instance.new("TextButton")
     CloseButton.Name = "CloseButton"
     CloseButton.Size = UDim2.new(0, 30, 0, 30)
@@ -80,6 +95,46 @@ local function createGUI()
     local CloseCorner = Instance.new("UICorner")
     CloseCorner.CornerRadius = UDim.new(0, 8)
     CloseCorner.Parent = CloseButton
+    
+    -- Creo il frame minimizzato che sarà visibile quando l'interfaccia è minimizzata
+    local MinimizedFrame = Instance.new("Frame")
+    MinimizedFrame.Name = "MinimizedFrame"
+    MinimizedFrame.Size = UDim2.new(0, 150, 0, 40)
+    MinimizedFrame.Position = UDim2.new(1, -160, 1, -50)
+    MinimizedFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    MinimizedFrame.BorderSizePixel = 0
+    MinimizedFrame.Visible = false
+    MinimizedFrame.Parent = ScreenGui
+    
+    local MinimizedCorner = Instance.new("UICorner")
+    MinimizedCorner.CornerRadius = UDim.new(0, 8)
+    MinimizedCorner.Parent = MinimizedFrame
+    
+    local MinimizedLabel = Instance.new("TextLabel")
+    MinimizedLabel.Name = "MinimizedLabel"
+    MinimizedLabel.Size = UDim2.new(1, -40, 1, 0)
+    MinimizedLabel.Position = UDim2.new(0, 10, 0, 0)
+    MinimizedLabel.BackgroundTransparency = 1
+    MinimizedLabel.Text = "UNIHAX"
+    MinimizedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    MinimizedLabel.TextSize = 18
+    MinimizedLabel.Font = Enum.Font.GothamBold
+    MinimizedLabel.Parent = MinimizedFrame
+    
+    local RestoreButton = Instance.new("TextButton")
+    RestoreButton.Name = "RestoreButton"
+    RestoreButton.Size = UDim2.new(0, 30, 0, 30)
+    RestoreButton.Position = UDim2.new(1, -35, 0, 5)
+    RestoreButton.BackgroundColor3 = Color3.fromRGB(60, 120, 200)
+    RestoreButton.Text = "+"
+    RestoreButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    RestoreButton.TextSize = 18
+    RestoreButton.Font = Enum.Font.GothamBold
+    RestoreButton.Parent = MinimizedFrame
+    
+    local RestoreCorner = Instance.new("UICorner")
+    RestoreCorner.CornerRadius = UDim.new(0, 8)
+    RestoreCorner.Parent = RestoreButton
     
     local function createButton(name, position)
         local Button = Instance.new("TextButton")
@@ -285,13 +340,76 @@ local function createGUI()
         end
     end)
     
+    -- Variabile per tenere traccia dello stato minimizzato
+    local isMinimized = false
+    
+    -- Funzione per minimizzare l'interfaccia
+    local function minimizeInterface()
+        isMinimized = true
+        MainFrame.Visible = false
+        MinimizedFrame.Visible = true
+    end
+    
+    -- Funzione per ripristinare l'interfaccia
+    local function restoreInterface()
+        isMinimized = false
+        MainFrame.Visible = true
+        MinimizedFrame.Visible = false
+    end
+    
+    -- Collego i pulsanti alle funzioni
+    MinimizeButton.MouseButton1Click:Connect(minimizeInterface)
+    RestoreButton.MouseButton1Click:Connect(restoreInterface)
+    
     CloseButton.MouseButton1Click:Connect(function()
         ScreenGui.Enabled = false
+    end)
+    
+    -- Rendo il frame minimizzato trascinabile
+    local minimizedDragging
+    local minimizedDragInput
+    local minimizedDragStart
+    local minimizedStartPos
+    
+    local function updateMinimizedPosition(input)
+        local delta = input.Position - minimizedDragStart
+        MinimizedFrame.Position = UDim2.new(minimizedStartPos.X.Scale, minimizedStartPos.X.Offset + delta.X, minimizedStartPos.Y.Scale, minimizedStartPos.Y.Offset + delta.Y)
+    end
+    
+    MinimizedFrame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            minimizedDragging = true
+            minimizedDragStart = input.Position
+            minimizedStartPos = MinimizedFrame.Position
+            
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    minimizedDragging = false
+                end
+            end)
+        end
+    end)
+    
+    MinimizedFrame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            minimizedDragInput = input
+        end
+    end)
+    
+    UserInputService.InputChanged:Connect(function(input)
+        if input == minimizedDragInput and minimizedDragging then
+            updateMinimizedPosition(input)
+        end
     end)
     
     UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if not gameProcessed and input.KeyCode == Enum.KeyCode.RightAlt then
             ScreenGui.Enabled = not ScreenGui.Enabled
+            if ScreenGui.Enabled and isMinimized then
+                -- Se riattivo l'interfaccia e era minimizzata, mantiene lo stato minimizzato
+                MainFrame.Visible = false
+                MinimizedFrame.Visible = true
+            end
         end
     end)
     
