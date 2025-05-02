@@ -65,6 +65,21 @@ local function createGUI()
     CloseCorner.CornerRadius = UDim.new(0, 8)
     CloseCorner.Parent = CloseButton
     
+    local MinimizeButton = Instance.new("TextButton")
+    MinimizeButton.Name = "MinimizeButton"
+    MinimizeButton.Size = UDim2.new(0, 30, 0, 30)
+    MinimizeButton.Position = UDim2.new(1, -70, 0, 5)
+    MinimizeButton.BackgroundColor3 = Color3.fromRGB(255, 200, 50)
+    MinimizeButton.Text = "-"
+    MinimizeButton.TextColor3 = Color3.fromRGB(30, 30, 30)
+    MinimizeButton.Visible = true
+    MinimizeButton.ZIndex = 2
+    MinimizeButton.Parent = TitleBar
+    
+    local MinimizeCorner = Instance.new("UICorner")
+    MinimizeCorner.CornerRadius = UDim.new(0, 8)
+    MinimizeCorner.Parent = MinimizeButton
+    
     local function createButton(name, position)
         local Button = Instance.new("TextButton")
         Button.Name = name
@@ -177,6 +192,18 @@ local function createGUI()
     
     CloseButton.MouseButton1Click:Connect(function()
         ScreenGui.Enabled = false
+    end)
+    
+    MinimizeButton.MouseButton1Click:Connect(function()
+        MainFrame.Visible = false
+        MinimizedFrame.Visible = true
+    end)
+
+    MinimizedFrame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            MainFrame.Visible = true
+            MinimizedFrame.Visible = false
+        end
     end)
     
     UserInputService.InputBegan:Connect(function(input, gameProcessed)
