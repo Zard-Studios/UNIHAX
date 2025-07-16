@@ -41,7 +41,7 @@ local function createGUI()
     
     local TitleLabel = Instance.new("TextLabel")
     TitleLabel.Name = "TitleLabel"
-    TitleLabel.Size = UDim2.new(1, -80, 1, 0)  // Modificato da -40 a -80 per fare spazio
+    TitleLabel.Size = UDim2.new(1, -40, 1, 0)
     TitleLabel.Position = UDim2.new(0, 10, 0, 0)
     TitleLabel.BackgroundTransparency = 1
     TitleLabel.Text = "UNIHAX"

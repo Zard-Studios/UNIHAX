@@ -1,12 +1,24 @@
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
-local UI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/UI.lua"))()
-local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/ESP.lua"))()
-local NoClip = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/NoClip.lua"))()
-local Teleport = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/Teleport.lua"))()
-local Fly = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/Fly.lua"))()
-local CharacterSpin = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/CharacterSpin.lua"))()
+local function safeLoad(url, name)
+    local success, result = pcall(function()
+        return loadstring(game:HttpGet(url))()
+    end)
+    if success and result then
+        return result
+    else
+        warn("Failed to load " .. name .. " from " .. url)
+        return nil
+    end
+end
+
+local UI = safeLoad("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/UI.lua", "UI")
+local ESP = safeLoad("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/ESP.lua", "ESP")
+local NoClip = safeLoad("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/NoClip.lua", "NoClip")
+local Teleport = safeLoad("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/Teleport.lua", "Teleport")
+local Fly = safeLoad("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/Fly.lua", "Fly")
+local CharacterSpin = safeLoad("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/CharacterSpin.lua", "CharacterSpin")
 
 local espEnabled = false
 local noClipEnabled = false
@@ -14,7 +26,11 @@ local flyEnabled = false
 local spinning = false
 
 -- Crea l'interfaccia utente
-UI.createGUI()
+if UI and UI.createGUI then
+    UI.createGUI()
+else
+    error("Failed to load UI module - cannot create GUI")
+end
 
 -- Funzione per garantire che l'interfaccia utente persista dopo la morte
 local function ensureGUIExists()
