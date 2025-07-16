@@ -3,10 +3,38 @@ local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
 
--- Variabili globali per le impostazioni (accessibili da tutti)
-_G.espOpacity = 0.5
-_G.espColor = Color3.fromRGB(255, 0, 0)
-_G.flySpeed = 50
+-- Sistema di impostazioni con callback
+_G.UniHaxSettings = {
+    espOpacity = 0.5,
+    espColor = Color3.fromRGB(255, 0, 0),
+    flySpeed = 50,
+    callbacks = {
+        onESPChange = {},
+        onFlyChange = {}
+    }
+}
+
+-- Funzioni per registrare callback
+_G.UniHaxSettings.onESPSettingsChange = function(callback)
+    table.insert(_G.UniHaxSettings.callbacks.onESPChange, callback)
+end
+
+_G.UniHaxSettings.onFlySettingsChange = function(callback)
+    table.insert(_G.UniHaxSettings.callbacks.onFlyChange, callback)
+end
+
+-- Funzioni per triggerare i callback
+local function fireESPCallbacks()
+    for _, callback in pairs(_G.UniHaxSettings.callbacks.onESPChange) do
+        pcall(callback, _G.UniHaxSettings.espOpacity, _G.UniHaxSettings.espColor)
+    end
+end
+
+local function fireFlyCallbacks()
+    for _, callback in pairs(_G.UniHaxSettings.callbacks.onFlyChange) do
+        pcall(callback, _G.UniHaxSettings.flySpeed)
+    end
+end
 
 local function createGUI()
     local existingGui = LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("ESPControl")
@@ -278,7 +306,8 @@ local function createGUI()
         -- Salvo il riferimento e aggiungo il click handler
         colorButtons[i] = ColorButton
         ColorButton.MouseButton1Click:Connect(function()
-            _G.espColor = colorData[1]  -- Aggiorna la variabile globale
+            _G.UniHaxSettings.espColor = colorData[1]  -- Aggiorna la variabile globale corretta
+            fireESPCallbacks()  -- Triggera i callback per aggiornare ESP in tempo reale
             -- Reset tutti i bordi
             for _, btn in pairs(colorButtons) do
                 local stroke = btn:FindFirstChild("UIStroke")
@@ -354,16 +383,18 @@ local function createGUI()
     
     -- Funzioni per gestire gli slider (aggiornano le variabili globali)
     local function updateOpacitySlider(value)
-        _G.espOpacity = math.clamp(value, 0, 1)
-        OpacityHandle.Position = UDim2.new(_G.espOpacity, -10, 0, 0)
-        OpacityLabel.Text = "Opacity: " .. math.floor(_G.espOpacity * 100) .. "%"
+        _G.UniHaxSettings.espOpacity = math.clamp(value, 0, 1)
+        OpacityHandle.Position = UDim2.new(_G.UniHaxSettings.espOpacity, -10, 0, 0)
+        OpacityLabel.Text = "Opacity: " .. math.floor(_G.UniHaxSettings.espOpacity * 100) .. "%"
+        fireESPCallbacks()  -- Triggera i callback quando cambia l'opacità
     end
     
     local function updateSpeedSlider(value)
-        _G.flySpeed = math.clamp(value, 10, 100)
-        local normalizedValue = (_G.flySpeed - 10) / 90
+        _G.UniHaxSettings.flySpeed = math.clamp(value, 10, 100)
+        local normalizedValue = (_G.UniHaxSettings.flySpeed - 10) / 90
         SpeedHandle.Position = UDim2.new(normalizedValue, -10, 0, 0)
-        SpeedLabel.Text = "Speed: " .. _G.flySpeed
+        SpeedLabel.Text = "Speed: " .. _G.UniHaxSettings.flySpeed
+        fireFlyCallbacks()  -- Triggera i callback quando cambia la velocità
     end
     
     -- Gestione drag per opacity slider
@@ -483,16 +514,16 @@ local function createGUI()
     ScreenGui.Enabled = true
 end
 
--- Funzioni per ottenere le impostazioni (leggono le variabili globali)
+-- Funzioni per ottenere le impostazioni (leggono le variabili globali corrette)
 local function getESPSettings()
     return {
-        opacity = _G.espOpacity,
-        color = _G.espColor
+        opacity = _G.UniHaxSettings.espOpacity,
+        color = _G.UniHaxSettings.espColor
     }
 end
 
 local function getFlySpeed()
-    return _G.flySpeed
+    return _G.UniHaxSettings.flySpeed
 end
 
 return {

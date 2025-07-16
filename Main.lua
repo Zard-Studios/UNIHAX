@@ -19,6 +19,7 @@ local NoClip = safeLoad("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/m
 local Teleport = safeLoad("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/Teleport.lua", "Teleport")
 local Fly = safeLoad("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/Fly.lua", "Fly")
 local CharacterSpin = safeLoad("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/CharacterSpin.lua", "CharacterSpin")
+local TestSettings = safeLoad("https://raw.githubusercontent.com/Zard-Studios/UNIHAX/main/TestSettings.lua", "TestSettings")
 
 local espEnabled = false
 local noClipEnabled = false
