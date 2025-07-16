@@ -65,13 +65,16 @@ local function createGUI()
     CloseCorner.CornerRadius = UDim.new(0, 8)
     CloseCorner.Parent = CloseButton
     
-    local function createButton(name, position)
+    local function createButton(name, position, hasGear)
         local Button = Instance.new("TextButton")
         Button.Name = name
         Button.Size = UDim2.new(0.9, 0, 0, 50)
         Button.Position = position
         Button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-        Button.Text = "Enable " .. name
+        
+        -- Cambia il testo per il pulsante Fling
+        local displayName = name == "CharacterSpin" and "Fling" or name
+        Button.Text = "Enable " .. displayName
         Button.TextColor3 = Color3.fromRGB(255, 255, 255)
         Button.TextSize = 18
         Button.Font = Enum.Font.GothamSemibold
@@ -86,14 +89,37 @@ local function createGUI()
         ButtonStroke.Thickness = 2
         ButtonStroke.Parent = Button
         
+        -- Aggiungi ingranaggio se necessario
+        if hasGear then
+            local GearButton = Instance.new("TextButton")
+            GearButton.Name = name .. "Gear"
+            GearButton.Size = UDim2.new(0, 40, 0, 40)
+            GearButton.Position = UDim2.new(1, -45, 0.5, -20)
+            GearButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+            GearButton.Text = "⚙️"
+            GearButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            GearButton.TextSize = 20
+            GearButton.Font = Enum.Font.GothamBold
+            GearButton.Parent = Button
+            
+            local GearCorner = Instance.new("UICorner")
+            GearCorner.CornerRadius = UDim.new(0, 6)
+            GearCorner.Parent = GearButton
+            
+            local GearStroke = Instance.new("UIStroke")
+            GearStroke.Color = Color3.fromRGB(120, 120, 120)
+            GearStroke.Thickness = 1
+            GearStroke.Parent = GearButton
+        end
+        
         return Button
     end
     
-    local ESPButton = createButton("ESP", UDim2.new(0.05, 0, 0.15, 0))
-    local NoClipButton = createButton("NoClip", UDim2.new(0.05, 0, 0.3, 0))
-    local TeleportButton = createButton("Teleport", UDim2.new(0.05, 0, 0.45, 0))
-    local FlyButton = createButton("Fly", UDim2.new(0.05, 0, 0.6, 0))
-    local SpinButton = createButton("CharacterSpin", UDim2.new(0.05, 0, 0.75, 0))
+    local ESPButton = createButton("ESP", UDim2.new(0.05, 0, 0.15, 0), true)
+    local NoClipButton = createButton("NoClip", UDim2.new(0.05, 0, 0.3, 0), false)
+    local TeleportButton = createButton("Teleport", UDim2.new(0.05, 0, 0.45, 0), false)
+    local FlyButton = createButton("Fly", UDim2.new(0.05, 0, 0.6, 0), true)
+    local SpinButton = createButton("CharacterSpin", UDim2.new(0.05, 0, 0.75, 0), false)
     
     local TeleportFrame = Instance.new("Frame")
     TeleportFrame.Name = "TeleportFrame"
@@ -138,6 +164,277 @@ local function createGUI()
     PlayerPadding.PaddingLeft = UDim.new(0, 5)
     PlayerPadding.PaddingRight = UDim.new(0, 5)
     PlayerPadding.Parent = PlayerList
+    
+    -- ESP Settings Frame
+    local ESPSettingsFrame = Instance.new("Frame")
+    ESPSettingsFrame.Name = "ESPSettingsFrame"
+    ESPSettingsFrame.Size = UDim2.new(0, 250, 0, 200)
+    ESPSettingsFrame.Position = UDim2.new(1, 10, 0, 0)
+    ESPSettingsFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    ESPSettingsFrame.BorderSizePixel = 0
+    ESPSettingsFrame.Visible = false
+    ESPSettingsFrame.Parent = MainFrame
+    
+    local ESPSettingsCorner = Instance.new("UICorner")
+    ESPSettingsCorner.CornerRadius = UDim.new(0, 8)
+    ESPSettingsCorner.Parent = ESPSettingsFrame
+    
+    local ESPSettingsTitle = Instance.new("TextLabel")
+    ESPSettingsTitle.Name = "Title"
+    ESPSettingsTitle.Size = UDim2.new(1, 0, 0, 30)
+    ESPSettingsTitle.BackgroundTransparency = 1
+    ESPSettingsTitle.Text = "ESP Settings"
+    ESPSettingsTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ESPSettingsTitle.TextSize = 16
+    ESPSettingsTitle.Font = Enum.Font.GothamBold
+    ESPSettingsTitle.Parent = ESPSettingsFrame
+    
+    -- Opacity Slider
+    local OpacityLabel = Instance.new("TextLabel")
+    OpacityLabel.Size = UDim2.new(1, -20, 0, 25)
+    OpacityLabel.Position = UDim2.new(0, 10, 0, 40)
+    OpacityLabel.BackgroundTransparency = 1
+    OpacityLabel.Text = "Opacity: 50%"
+    OpacityLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    OpacityLabel.TextSize = 14
+    OpacityLabel.Font = Enum.Font.Gotham
+    OpacityLabel.Parent = ESPSettingsFrame
+    
+    local OpacitySlider = Instance.new("Frame")
+    OpacitySlider.Size = UDim2.new(1, -20, 0, 20)
+    OpacitySlider.Position = UDim2.new(0, 10, 0, 70)
+    OpacitySlider.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    OpacitySlider.Parent = ESPSettingsFrame
+    
+    local OpacitySliderCorner = Instance.new("UICorner")
+    OpacitySliderCorner.CornerRadius = UDim.new(0, 10)
+    OpacitySliderCorner.Parent = OpacitySlider
+    
+    local OpacityHandle = Instance.new("TextButton")
+    OpacityHandle.Size = UDim2.new(0, 20, 1, 0)
+    OpacityHandle.Position = UDim2.new(0.5, -10, 0, 0)
+    OpacityHandle.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+    OpacityHandle.Text = ""
+    OpacityHandle.Parent = OpacitySlider
+    
+    local OpacityHandleCorner = Instance.new("UICorner")
+    OpacityHandleCorner.CornerRadius = UDim.new(0, 10)
+    OpacityHandleCorner.Parent = OpacityHandle
+    
+    -- Color Buttons
+    local ColorLabel = Instance.new("TextLabel")
+    ColorLabel.Size = UDim2.new(1, -20, 0, 25)
+    ColorLabel.Position = UDim2.new(0, 10, 0, 100)
+    ColorLabel.BackgroundTransparency = 1
+    ColorLabel.Text = "Color:"
+    ColorLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ColorLabel.TextSize = 14
+    ColorLabel.Font = Enum.Font.Gotham
+    ColorLabel.Parent = ESPSettingsFrame
+    
+    local ColorFrame = Instance.new("Frame")
+    ColorFrame.Size = UDim2.new(1, -20, 0, 40)
+    ColorFrame.Position = UDim2.new(0, 10, 0, 130)
+    ColorFrame.BackgroundTransparency = 1
+    ColorFrame.Parent = ESPSettingsFrame
+    
+    local ColorLayout = Instance.new("UIListLayout")
+    ColorLayout.FillDirection = Enum.FillDirection.Horizontal
+    ColorLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    ColorLayout.Padding = UDim.new(0, 5)
+    ColorLayout.Parent = ColorFrame
+    
+    local colors = {
+        {Color3.fromRGB(255, 0, 0), "Red"},
+        {Color3.fromRGB(0, 255, 0), "Green"},
+        {Color3.fromRGB(0, 0, 255), "Blue"},
+        {Color3.fromRGB(255, 255, 0), "Yellow"},
+        {Color3.fromRGB(255, 0, 255), "Purple"}
+    }
+    
+    for i, colorData in ipairs(colors) do
+        local ColorButton = Instance.new("TextButton")
+        ColorButton.Size = UDim2.new(0, 35, 0, 35)
+        ColorButton.BackgroundColor3 = colorData[1]
+        ColorButton.Text = ""
+        ColorButton.Parent = ColorFrame
+        
+        local ColorButtonCorner = Instance.new("UICorner")
+        ColorButtonCorner.CornerRadius = UDim.new(0, 6)
+        ColorButtonCorner.Parent = ColorButton
+        
+        local ColorButtonStroke = Instance.new("UIStroke")
+        ColorButtonStroke.Color = Color3.fromRGB(255, 255, 255)
+        ColorButtonStroke.Thickness = 2
+        ColorButtonStroke.Parent = ColorButton
+    end
+    
+    -- Fly Settings Frame
+    local FlySettingsFrame = Instance.new("Frame")
+    FlySettingsFrame.Name = "FlySettingsFrame"
+    FlySettingsFrame.Size = UDim2.new(0, 250, 0, 120)
+    FlySettingsFrame.Position = UDim2.new(1, 10, 0, 0)
+    FlySettingsFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    FlySettingsFrame.BorderSizePixel = 0
+    FlySettingsFrame.Visible = false
+    FlySettingsFrame.Parent = MainFrame
+    
+    local FlySettingsCorner = Instance.new("UICorner")
+    FlySettingsCorner.CornerRadius = UDim.new(0, 8)
+    FlySettingsCorner.Parent = FlySettingsFrame
+    
+    local FlySettingsTitle = Instance.new("TextLabel")
+    FlySettingsTitle.Name = "Title"
+    FlySettingsTitle.Size = UDim2.new(1, 0, 0, 30)
+    FlySettingsTitle.BackgroundTransparency = 1
+    FlySettingsTitle.Text = "Fly Settings"
+    FlySettingsTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    FlySettingsTitle.TextSize = 16
+    FlySettingsTitle.Font = Enum.Font.GothamBold
+    FlySettingsTitle.Parent = FlySettingsFrame
+    
+    -- Speed Slider
+    local SpeedLabel = Instance.new("TextLabel")
+    SpeedLabel.Size = UDim2.new(1, -20, 0, 25)
+    SpeedLabel.Position = UDim2.new(0, 10, 0, 40)
+    SpeedLabel.BackgroundTransparency = 1
+    SpeedLabel.Text = "Speed: 50"
+    SpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    SpeedLabel.TextSize = 14
+    SpeedLabel.Font = Enum.Font.Gotham
+    SpeedLabel.Parent = FlySettingsFrame
+    
+    local SpeedSlider = Instance.new("Frame")
+    SpeedSlider.Size = UDim2.new(1, -20, 0, 20)
+    SpeedSlider.Position = UDim2.new(0, 10, 0, 70)
+    SpeedSlider.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    SpeedSlider.Parent = FlySettingsFrame
+    
+    local SpeedSliderCorner = Instance.new("UICorner")
+    SpeedSliderCorner.CornerRadius = UDim.new(0, 10)
+    SpeedSliderCorner.Parent = SpeedSlider
+    
+    local SpeedHandle = Instance.new("TextButton")
+    SpeedHandle.Size = UDim2.new(0, 20, 1, 0)
+    SpeedHandle.Position = UDim2.new(0.5, -10, 0, 0)
+    SpeedHandle.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
+    SpeedHandle.Text = ""
+    SpeedHandle.Parent = SpeedSlider
+    
+    local SpeedHandleCorner = Instance.new("UICorner")
+    SpeedHandleCorner.CornerRadius = UDim.new(0, 10)
+    SpeedHandleCorner.Parent = SpeedHandle
+    
+    -- Variabili per le impostazioni
+    local espOpacity = 0.5
+    local espColor = Color3.fromRGB(255, 0, 0)
+    local flySpeed = 50
+    
+    -- Funzioni per gestire gli slider
+    local function updateOpacitySlider(value)
+        espOpacity = math.clamp(value, 0, 1)
+        OpacityHandle.Position = UDim2.new(espOpacity, -10, 0, 0)
+        OpacityLabel.Text = "Opacity: " .. math.floor(espOpacity * 100) .. "%"
+    end
+    
+    local function updateSpeedSlider(value)
+        flySpeed = math.clamp(value, 10, 100)
+        local normalizedValue = (flySpeed - 10) / 90
+        SpeedHandle.Position = UDim2.new(normalizedValue, -10, 0, 0)
+        SpeedLabel.Text = "Speed: " .. flySpeed
+    end
+    
+    -- Gestione drag per opacity slider
+    local opacityDragging = false
+    OpacityHandle.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            opacityDragging = true
+        end
+    end)
+    
+    OpacityHandle.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            opacityDragging = false
+        end
+    end)
+    
+    UserInputService.InputChanged:Connect(function(input)
+        if opacityDragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local sliderPosition = OpacitySlider.AbsolutePosition.X
+            local sliderSize = OpacitySlider.AbsoluteSize.X
+            local mouseX = input.Position.X
+            local relativeX = (mouseX - sliderPosition) / sliderSize
+            updateOpacitySlider(math.clamp(relativeX, 0, 1))
+        end
+    end)
+    
+    -- Gestione drag per speed slider
+    local speedDragging = false
+    SpeedHandle.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            speedDragging = true
+        end
+    end)
+    
+    SpeedHandle.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            speedDragging = false
+        end
+    end)
+    
+    UserInputService.InputChanged:Connect(function(input)
+        if speedDragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local sliderPosition = SpeedSlider.AbsolutePosition.X
+            local sliderSize = SpeedSlider.AbsoluteSize.X
+            local mouseX = input.Position.X
+            local relativeX = (mouseX - sliderPosition) / sliderSize
+            local newSpeed = 10 + (relativeX * 90)
+            updateSpeedSlider(newSpeed)
+        end
+    end)
+    
+    -- Gestione click sui colori ESP
+    for i, colorData in ipairs(colors) do
+        local ColorButton = ColorFrame:GetChildren()[i + 1] -- +1 perché il primo child è UIListLayout
+        if ColorButton and ColorButton:IsA("TextButton") then
+            ColorButton.MouseButton1Click:Connect(function()
+                espColor = colorData[1]
+                -- Reset tutti i bordi
+                for _, child in ipairs(ColorFrame:GetChildren()) do
+                    if child:IsA("TextButton") then
+                        local stroke = child:FindFirstChild("UIStroke")
+                        if stroke then
+                            stroke.Color = Color3.fromRGB(255, 255, 255)
+                            stroke.Thickness = 2
+                        end
+                    end
+                end
+                -- Evidenzia il colore selezionato
+                local selectedStroke = ColorButton:FindFirstChild("UIStroke")
+                if selectedStroke then
+                    selectedStroke.Color = Color3.fromRGB(0, 255, 0)
+                    selectedStroke.Thickness = 3
+                end
+            end)
+        end
+    end
+    
+    -- Gestione click degli ingranaggi
+    local ESPGear = ESPButton:FindFirstChild("ESPGear")
+    if ESPGear then
+        ESPGear.MouseButton1Click:Connect(function()
+            ESPSettingsFrame.Visible = not ESPSettingsFrame.Visible
+            FlySettingsFrame.Visible = false -- Chiudi l'altro pannello
+        end)
+    end
+    
+    local FlyGear = FlyButton:FindFirstChild("FlyGear")
+    if FlyGear then
+        FlyGear.MouseButton1Click:Connect(function()
+            FlySettingsFrame.Visible = not FlySettingsFrame.Visible
+            ESPSettingsFrame.Visible = false -- Chiudi l'altro pannello
+        end)
+    end
     
     local dragging
     local dragInput
@@ -188,6 +485,25 @@ local function createGUI()
     ScreenGui.Enabled = true
 end
 
+-- Variabili globali per le impostazioni
+local espOpacity = 0.5
+local espColor = Color3.fromRGB(255, 0, 0)
+local flySpeed = 50
+
+-- Funzioni per ottenere le impostazioni
+local function getESPSettings()
+    return {
+        opacity = espOpacity,
+        color = espColor
+    }
+end
+
+local function getFlySpeed()
+    return flySpeed
+end
+
 return {
-    createGUI = createGUI
+    createGUI = createGUI,
+    getESPSettings = getESPSettings,
+    getFlySpeed = getFlySpeed
 }
