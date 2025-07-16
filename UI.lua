@@ -3,6 +3,11 @@ local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
 
+-- Variabili globali per le impostazioni
+local espOpacity = 0.5
+local espColor = Color3.fromRGB(255, 0, 0)
+local flySpeed = 50
+
 local function createGUI()
     local existingGui = LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("ESPControl")
     if existingGui then
@@ -72,8 +77,8 @@ local function createGUI()
         Button.Position = position
         Button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
         
-        -- Cambia il testo per il pulsante Fling
-        local displayName = name == "CharacterSpin" and "Fling" or name
+        -- Cambia il testo per il pulsante Spin
+        local displayName = name == "CharacterSpin" and "Spin" or name
         Button.Text = "Enable " .. displayName
         Button.TextColor3 = Color3.fromRGB(255, 255, 255)
         Button.TextSize = 18
@@ -252,6 +257,8 @@ local function createGUI()
         {Color3.fromRGB(255, 0, 255), "Purple"}
     }
     
+    -- Creo i pulsanti colore e salvo i riferimenti
+    local colorButtons = {}
     for i, colorData in ipairs(colors) do
         local ColorButton = Instance.new("TextButton")
         ColorButton.Size = UDim2.new(0, 35, 0, 35)
@@ -267,6 +274,26 @@ local function createGUI()
         ColorButtonStroke.Color = Color3.fromRGB(255, 255, 255)
         ColorButtonStroke.Thickness = 2
         ColorButtonStroke.Parent = ColorButton
+        
+        -- Salvo il riferimento e aggiungo il click handler
+        colorButtons[i] = ColorButton
+        ColorButton.MouseButton1Click:Connect(function()
+            espColor = colorData[1]
+            -- Reset tutti i bordi
+            for _, btn in pairs(colorButtons) do
+                local stroke = btn:FindFirstChild("UIStroke")
+                if stroke then
+                    stroke.Color = Color3.fromRGB(255, 255, 255)
+                    stroke.Thickness = 2
+                end
+            end
+            -- Evidenzia il colore selezionato
+            local selectedStroke = ColorButton:FindFirstChild("UIStroke")
+            if selectedStroke then
+                selectedStroke.Color = Color3.fromRGB(0, 255, 0)
+                selectedStroke.Thickness = 3
+            end
+        end)
     end
     
     -- Fly Settings Frame
@@ -325,12 +352,7 @@ local function createGUI()
     SpeedHandleCorner.CornerRadius = UDim.new(0, 10)
     SpeedHandleCorner.Parent = SpeedHandle
     
-    -- Variabili per le impostazioni
-    local espOpacity = 0.5
-    local espColor = Color3.fromRGB(255, 0, 0)
-    local flySpeed = 50
-    
-    -- Funzioni per gestire gli slider
+    -- Funzioni per gestire gli slider (usano le variabili globali)
     local function updateOpacitySlider(value)
         espOpacity = math.clamp(value, 0, 1)
         OpacityHandle.Position = UDim2.new(espOpacity, -10, 0, 0)
@@ -393,31 +415,7 @@ local function createGUI()
         end
     end)
     
-    -- Gestione click sui colori ESP
-    for i, colorData in ipairs(colors) do
-        local ColorButton = ColorFrame:GetChildren()[i + 1] -- +1 perché il primo child è UIListLayout
-        if ColorButton and ColorButton:IsA("TextButton") then
-            ColorButton.MouseButton1Click:Connect(function()
-                espColor = colorData[1]
-                -- Reset tutti i bordi
-                for _, child in ipairs(ColorFrame:GetChildren()) do
-                    if child:IsA("TextButton") then
-                        local stroke = child:FindFirstChild("UIStroke")
-                        if stroke then
-                            stroke.Color = Color3.fromRGB(255, 255, 255)
-                            stroke.Thickness = 2
-                        end
-                    end
-                end
-                -- Evidenzia il colore selezionato
-                local selectedStroke = ColorButton:FindFirstChild("UIStroke")
-                if selectedStroke then
-                    selectedStroke.Color = Color3.fromRGB(0, 255, 0)
-                    selectedStroke.Thickness = 3
-                end
-            end)
-        end
-    end
+
     
     -- Gestione click degli ingranaggi
     local ESPGear = ESPButton:FindFirstChild("ESPGear")
@@ -484,11 +482,6 @@ local function createGUI()
     
     ScreenGui.Enabled = true
 end
-
--- Variabili globali per le impostazioni
-local espOpacity = 0.5
-local espColor = Color3.fromRGB(255, 0, 0)
-local flySpeed = 50
 
 -- Funzioni per ottenere le impostazioni
 local function getESPSettings()
