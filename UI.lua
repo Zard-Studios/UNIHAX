@@ -244,15 +244,29 @@ local function createGUI()
     OpacitySliderCorner.Parent = OpacitySlider
     
     local OpacityHandle = Instance.new("TextButton")
-    OpacityHandle.Size = UDim2.new(0, 20, 1, 0)
-    OpacityHandle.Position = UDim2.new(0.5, -10, 0, 0)
+    OpacityHandle.Size = UDim2.new(0, 24, 0, 24)
+    OpacityHandle.Position = UDim2.new(0.5, -12, 0.5, -12)
     OpacityHandle.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
     OpacityHandle.Text = ""
     OpacityHandle.Parent = OpacitySlider
+    OpacityHandle.AutoButtonColor = false
     
     local OpacityHandleCorner = Instance.new("UICorner")
-    OpacityHandleCorner.CornerRadius = UDim.new(0, 10)
+    OpacityHandleCorner.CornerRadius = UDim.new(0, 12)
     OpacityHandleCorner.Parent = OpacityHandle
+    
+    -- Effetto hover per opacity handle
+    OpacityHandle.MouseEnter:Connect(function()
+        OpacityHandle.BackgroundColor3 = Color3.fromRGB(0, 200, 255)
+        OpacityHandle.Size = UDim2.new(0, 28, 0, 28)
+        OpacityHandle.Position = UDim2.new(OpacityHandle.Position.X.Scale, OpacityHandle.Position.X.Offset - 2, 0.5, -14)
+    end)
+    
+    OpacityHandle.MouseLeave:Connect(function()
+        OpacityHandle.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+        OpacityHandle.Size = UDim2.new(0, 24, 0, 24)
+        OpacityHandle.Position = UDim2.new(OpacityHandle.Position.X.Scale, OpacityHandle.Position.X.Offset + 2, 0.5, -12)
+    end)
     
     -- Color Buttons
     local ColorLabel = Instance.new("TextLabel")
@@ -371,20 +385,34 @@ local function createGUI()
     SpeedSliderCorner.Parent = SpeedSlider
     
     local SpeedHandle = Instance.new("TextButton")
-    SpeedHandle.Size = UDim2.new(0, 20, 1, 0)
-    SpeedHandle.Position = UDim2.new(0.5, -10, 0, 0)
+    SpeedHandle.Size = UDim2.new(0, 24, 0, 24)
+    SpeedHandle.Position = UDim2.new(0.5, -12, 0.5, -12)
     SpeedHandle.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
     SpeedHandle.Text = ""
     SpeedHandle.Parent = SpeedSlider
+    SpeedHandle.AutoButtonColor = false
     
     local SpeedHandleCorner = Instance.new("UICorner")
-    SpeedHandleCorner.CornerRadius = UDim.new(0, 10)
+    SpeedHandleCorner.CornerRadius = UDim.new(0, 12)
     SpeedHandleCorner.Parent = SpeedHandle
+    
+    -- Effetto hover per speed handle
+    SpeedHandle.MouseEnter:Connect(function()
+        SpeedHandle.BackgroundColor3 = Color3.fromRGB(255, 200, 0)
+        SpeedHandle.Size = UDim2.new(0, 28, 0, 28)
+        SpeedHandle.Position = UDim2.new(SpeedHandle.Position.X.Scale, SpeedHandle.Position.X.Offset - 2, 0.5, -14)
+    end)
+    
+    SpeedHandle.MouseLeave:Connect(function()
+        SpeedHandle.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
+        SpeedHandle.Size = UDim2.new(0, 24, 0, 24)
+        SpeedHandle.Position = UDim2.new(SpeedHandle.Position.X.Scale, SpeedHandle.Position.X.Offset + 2, 0.5, -12)
+    end)
     
     -- Funzioni per gestire gli slider (aggiornano le variabili globali)
     local function updateOpacitySlider(value)
         _G.UniHaxSettings.espOpacity = math.clamp(value, 0, 1)
-        OpacityHandle.Position = UDim2.new(_G.UniHaxSettings.espOpacity, -10, 0, 0)
+        OpacityHandle.Position = UDim2.new(_G.UniHaxSettings.espOpacity, -12, 0.5, -12)
         OpacityLabel.Text = "Opacity: " .. math.floor(_G.UniHaxSettings.espOpacity * 100) .. "%"
         fireESPCallbacks()  -- Triggera i callback quando cambia l'opacità
     end
@@ -392,7 +420,7 @@ local function createGUI()
     local function updateSpeedSlider(value)
         _G.UniHaxSettings.flySpeed = math.clamp(value, 10, 100)
         local normalizedValue = (_G.UniHaxSettings.flySpeed - 10) / 90
-        SpeedHandle.Position = UDim2.new(normalizedValue, -10, 0, 0)
+        SpeedHandle.Position = UDim2.new(normalizedValue, -12, 0.5, -12)
         SpeedLabel.Text = "Speed: " .. _G.UniHaxSettings.flySpeed
         fireFlyCallbacks()  -- Triggera i callback quando cambia la velocità
     end

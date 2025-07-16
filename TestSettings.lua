@@ -22,9 +22,12 @@ _G.UniHaxSettings.onESPSettingsChange(function(opacity, color)
         if player ~= Players.LocalPlayer and player.Character then
             local highlight = player.Character:FindFirstChild("ESPHighlight")
             if highlight then
-                highlight.FillTransparency = opacity
+                -- CORRETTO: 1 - opacity per invertire la logica
+                -- opacity 1.0 (100%) = FillTransparency 0.0 (completamente visibile)
+                -- opacity 0.0 (0%) = FillTransparency 1.0 (completamente trasparente)
+                highlight.FillTransparency = 1 - opacity
                 highlight.FillColor = color
-                print("✅ Aggiornato ESP per", player.Name)
+                print("✅ Aggiornato ESP per", player.Name, "- Transparency:", 1 - opacity)
             end
         end
     end
@@ -35,10 +38,29 @@ _G.UniHaxSettings.onFlySettingsChange(function(speed)
     print("🚀 FLY SPEED CAMBIATO!")
     print("Nuova Speed:", speed)
     
-    -- Esempio: aggiorna la velocità di volo se attiva
+    -- Aggiorna tutte le variabili di velocità di volo comuni
     if _G.iyflyspeed then
         _G.iyflyspeed = speed
-        print("✅ Velocità di volo aggiornata a", speed)
+        print("✅ Infinite Yield fly speed aggiornata a", speed)
+    end
+    
+    if _G.flySpeed then
+        _G.flySpeed = speed
+        print("✅ Global fly speed aggiornata a", speed)
+    end
+    
+    -- Aggiorna anche le variabili di volo veicolo
+    if _G.vehicleflyspeed then
+        _G.vehicleflyspeed = speed
+        print("✅ Vehicle fly speed aggiornata a", speed)
+    end
+    
+    -- Se c'è un sistema di volo attivo, prova ad aggiornarlo
+    if workspace.CurrentCamera:FindFirstChild("FlyBodyVelocity") then
+        local bv = workspace.CurrentCamera:FindFirstChild("FlyBodyVelocity")
+        if bv then
+            print("✅ Aggiornato BodyVelocity attivo")
+        end
     end
 end)
 
@@ -50,7 +72,7 @@ local function createTestESP()
             highlight.Name = "ESPHighlight"
             highlight.FillColor = _G.UniHaxSettings.espColor
             highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-            highlight.FillTransparency = _G.UniHaxSettings.espOpacity
+            highlight.FillTransparency = 1 - _G.UniHaxSettings.espOpacity  -- Corretto anche qui
             highlight.OutlineTransparency = 0
             highlight.Parent = player.Character
             print("🎯 Creato ESP di test per", player.Name)
