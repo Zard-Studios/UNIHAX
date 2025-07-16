@@ -3,10 +3,10 @@ local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
 
--- Variabili globali per le impostazioni
-local espOpacity = 0.5
-local espColor = Color3.fromRGB(255, 0, 0)
-local flySpeed = 50
+-- Variabili globali per le impostazioni (accessibili da tutti)
+_G.espOpacity = 0.5
+_G.espColor = Color3.fromRGB(255, 0, 0)
+_G.flySpeed = 50
 
 local function createGUI()
     local existingGui = LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("ESPControl")
@@ -278,7 +278,7 @@ local function createGUI()
         -- Salvo il riferimento e aggiungo il click handler
         colorButtons[i] = ColorButton
         ColorButton.MouseButton1Click:Connect(function()
-            espColor = colorData[1]
+            _G.espColor = colorData[1]  -- Aggiorna la variabile globale
             -- Reset tutti i bordi
             for _, btn in pairs(colorButtons) do
                 local stroke = btn:FindFirstChild("UIStroke")
@@ -352,18 +352,18 @@ local function createGUI()
     SpeedHandleCorner.CornerRadius = UDim.new(0, 10)
     SpeedHandleCorner.Parent = SpeedHandle
     
-    -- Funzioni per gestire gli slider (usano le variabili globali)
+    -- Funzioni per gestire gli slider (aggiornano le variabili globali)
     local function updateOpacitySlider(value)
-        espOpacity = math.clamp(value, 0, 1)
-        OpacityHandle.Position = UDim2.new(espOpacity, -10, 0, 0)
-        OpacityLabel.Text = "Opacity: " .. math.floor(espOpacity * 100) .. "%"
+        _G.espOpacity = math.clamp(value, 0, 1)
+        OpacityHandle.Position = UDim2.new(_G.espOpacity, -10, 0, 0)
+        OpacityLabel.Text = "Opacity: " .. math.floor(_G.espOpacity * 100) .. "%"
     end
     
     local function updateSpeedSlider(value)
-        flySpeed = math.clamp(value, 10, 100)
-        local normalizedValue = (flySpeed - 10) / 90
+        _G.flySpeed = math.clamp(value, 10, 100)
+        local normalizedValue = (_G.flySpeed - 10) / 90
         SpeedHandle.Position = UDim2.new(normalizedValue, -10, 0, 0)
-        SpeedLabel.Text = "Speed: " .. flySpeed
+        SpeedLabel.Text = "Speed: " .. _G.flySpeed
     end
     
     -- Gestione drag per opacity slider
@@ -483,16 +483,16 @@ local function createGUI()
     ScreenGui.Enabled = true
 end
 
--- Funzioni per ottenere le impostazioni
+-- Funzioni per ottenere le impostazioni (leggono le variabili globali)
 local function getESPSettings()
     return {
-        opacity = espOpacity,
-        color = espColor
+        opacity = _G.espOpacity,
+        color = _G.espColor
     }
 end
 
 local function getFlySpeed()
-    return flySpeed
+    return _G.flySpeed
 end
 
 return {
